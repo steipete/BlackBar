@@ -2,5 +2,16 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
         <title>BlackBar</title>
+        <item>
+            <title>0.1.0</title>
+            <pubDate>Sun, 10 May 2026 11:55:35 +0100</pubDate>
+            <link>https://raw.githubusercontent.com/openclaw/BlackBar/main/appcast.xml</link>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<ul><li>Add the initial native macOS menu bar app for Blacksmith CI status and live vCPU usage.</li><li>Show current Blacksmith vCPU and active job totals in the menu bar with a compact history graph.</li><li>Add an AppKit-native menu with public Blacksmith status, active and queued counts, API diagnostics, manual refresh, and direct links to Blacksmith and GitHub Actions.</li><li>Show live platform buckets for `amd64`, `arm64`, and `macos` usage when per-job details are not available.</li><li>Add GitHub login through Blacksmith&#x27;s OAuth flow in a native WebKit window.</li><li>Store the Blacksmith session cookie in Keychain and cache it in memory after launch to avoid repeated Keychain prompts.</li><li>Add a native Settings window for organization, repository filter, and polling interval.</li><li>Add dynamic menu bar sizing for large vCPU counts and fixed-width wrapped diagnostics in the menu.</li><li>Add a Blacksmith-inspired macOS app icon with neon yellow, blocky black glyphs, and vCPU activity bars.</li><li>Add Sparkle-based automatic updates for signed release builds.</li><li>Add release packaging, codesigning, notarization, appcast, release-note helpers, live-update testing, and macOS CI.</li></ul>
+]]></description>
+            <enclosure url="https://github.com/openclaw/BlackBar/releases/download/v0.1.0/BlackBar-0.1.0.zip" length="1712421" type="application/octet-stream" sparkle:edSignature="A9UahIU0DFTVlsxSu8owju0VY/afFeQ1Qi9SCtsOsifxP3l4IFvkbjzjVglUovd0653zGkQIlim/jgmwrqOGDA=="/>
+        </item>
     </channel>
 </rss>
