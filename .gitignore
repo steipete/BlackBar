@@ -1,7 +1,73 @@
-.build/
-build/
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.pins
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Xcode
 DerivedData/
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.xcuserstate
+
+# App build outputs
+*.app
+*.app.dSYM
 *.zip
 *.dSYM
+*.dmg
 Assets/Icon.iconset/
+
+# Sparkle / signing — never commit private keys
+*.key
+*.p8
+*.p12
+sparkle-ed25519.key
+.env
+.env.local
+.envrc
+
+# Notarization & release receipts
+notarization-*.json
+*.notarytool.log
+release-*.log
+
+# Logs / temp
+*.log
+.tmp/
+tmp/
+.cache/
+
+# Node / web tooling (in case docs/ adds tooling later)
+node_modules/
+.pnpm-store/
+*.tsbuildinfo
+
+# Editor / IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.cursor/
+.claude/
