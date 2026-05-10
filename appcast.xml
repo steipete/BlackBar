@@ -3,6 +3,17 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.1.1</title>
+            <pubDate>Sun, 10 May 2026 12:35:28 +0100</pubDate>
+            <link>https://raw.githubusercontent.com/openclaw/BlackBar/main/appcast.xml</link>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>0.1.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<ul><li>Use high-contrast menu bar text and graph rendering for bright Blacksmith-style desktop backgrounds.</li><li>Remove the duplicate status line from the menu details.</li><li>Replace the app icon artwork with a full-bleed Blacksmith-style neon tile that avoids the white inset gap in Finder and Launchpad.</li></ul>
+]]></description>
+            <enclosure url="https://github.com/openclaw/BlackBar/releases/download/v0.1.1/BlackBar-0.1.1.zip" length="1644619" type="application/octet-stream" sparkle:edSignature="ckJYFKQn544KqdyWWrEAua6uheOaVpwMfAKHDwHrnu4dJaTlGjDSC0AeGzNtX+0jbl98Fj3eJ3C0ntJU/Y4hCA=="/>
+        </item>
+        <item>
             <title>0.1.0</title>
             <pubDate>Sun, 10 May 2026 11:55:35 +0100</pubDate>
             <link>https://raw.githubusercontent.com/openclaw/BlackBar/main/appcast.xml</link>
