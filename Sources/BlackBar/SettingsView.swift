@@ -15,6 +15,9 @@ struct SettingsView: View {
             DashboardSettingsView(model: self.model)
                 .tabItem { Label("Dashboard", systemImage: "chart.bar.xaxis") }
                 .tag(SettingsTab.dashboard)
+            NotificationsSettingsView(model: self.model)
+                .tabItem { Label("Notifications", systemImage: "bell") }
+                .tag(SettingsTab.notifications)
             AboutSettingsView()
                 .tabItem { Label("About", systemImage: "info.circle") }
                 .tag(SettingsTab.about)
@@ -63,6 +66,7 @@ struct SettingsView: View {
 enum SettingsTab: CaseIterable, Hashable {
     case general
     case dashboard
+    case notifications
     case about
 
     static let defaultWidth: CGFloat = 540
@@ -73,6 +77,7 @@ enum SettingsTab: CaseIterable, Hashable {
         switch self {
         case .general: "General"
         case .dashboard: "Dashboard"
+        case .notifications: "Notifications"
         case .about: "About"
         }
     }
@@ -210,6 +215,34 @@ private struct DashboardSettingsView: View {
                 }
             }
         }
+        .padding(20)
+    }
+}
+
+private struct NotificationsSettingsView: View {
+    @ObservedObject var model: AppModel
+
+    var body: some View {
+        Form {
+            Section("Send notifications when") {
+                Toggle("Blacksmith status changes", isOn: self.$model.notifyStatusChanges)
+                Toggle("A new incident is reported", isOn: self.$model.notifyIncidents)
+                Toggle("A tracked job finishes", isOn: self.$model.notifyJobFinished)
+            }
+
+            Section {
+                Text("Click a notification to open the relevant Blacksmith or GitHub page. Notifications are off by default; turning one on prompts macOS for permission.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
+                Button("Send Test Notification") {
+                    Task { await Notifications.shared.sendTestNotification() }
+                }
+            }
+        }
+        .formStyle(.grouped)
         .padding(20)
     }
 }
