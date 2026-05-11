@@ -25,6 +25,10 @@ let package = Package(
                 .linkedFramework("SwiftUI"),
                 .linkedFramework("WebKit")
             ]
+        ),
+        .testTarget(
+            name: "BlackBarTests",
+            dependencies: ["BlackBar"]
         )
     ]
 )

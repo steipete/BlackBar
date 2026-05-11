@@ -52,6 +52,10 @@ final class Notifications: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
+    func post(_ event: NotificationEvent) async {
+        await post(id: event.id, title: event.title, body: event.body, url: event.url)
+    }
+
     func sendTestNotification() async {
         await requestAuthorizationIfNeeded()
         await post(

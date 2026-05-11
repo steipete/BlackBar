@@ -2,6 +2,8 @@
 
 ## 0.1.4 - Unreleased
 
+- Add opt-in macOS notifications for Blacksmith status changes, new incidents, and finished jobs (#1). Thanks @mvanhorn.
+
 ## 0.1.3 - 2026-05-10
 
 - Move GitHub release, appcast, documentation, and update-feed references to `steipete/BlackBar`.

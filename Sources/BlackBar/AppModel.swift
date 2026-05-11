@@ -186,52 +186,13 @@ final class AppModel: ObservableObject {
     }
 
     private func emitNotifications(previous: DashboardSnapshot, current: DashboardSnapshot) {
-        let previousPage = previous.status.pageStatus.uppercased()
-        let currentPage = current.status.pageStatus.uppercased()
-        let hadRealStatus = previousPage != "UNKNOWN" && previous.refreshedAt != nil
-
-        if notifyStatusChanges && hadRealStatus && previousPage != currentPage {
-            let title: String
-            let body: String
-            if currentPage == "UP" {
-                title = "Blacksmith operational"
-                body = "Status is back to UP after \(previous.status.label)."
-            } else {
-                title = "Blacksmith status: \(current.status.label)"
-                body = "Page status changed from \(previous.status.label) to \(current.status.label)."
-            }
-            let url = URL(string: "https://status.blacksmith.sh")
-            let id = "blackbar.status.\(previousPage).\(currentPage)"
-            Task { await Notifications.shared.post(id: id, title: title, body: body, url: url) }
-        }
-
-        if notifyIncidents && hadRealStatus {
-            let oldIDs = Set(previous.status.incidents.map(\.id))
-            for incident in current.status.incidents where !oldIDs.contains(incident.id) {
-                let url = URL(string: "https://status.blacksmith.sh")
-                Task { await Notifications.shared.post(
-                    id: "blackbar.incident.\(incident.id)",
-                    title: "Blacksmith incident",
-                    body: incident.name,
-                    url: url
-                ) }
-            }
-        }
-
-        if notifyJobFinished && previous.refreshedAt != nil {
-            let oldRuns = Dictionary(uniqueKeysWithValues: previous.usage.runs.map { ($0.id, $0) })
-            let currentIDs = Set(current.usage.runs.map(\.id))
-            for (id, run) in oldRuns where !currentIDs.contains(id) {
-                let url = URL(string: run.url)
-                let title = "Job finished"
-                let body = "\(run.title) on \(run.repository)"
-                Task { await Notifications.shared.post(
-                    id: "blackbar.job.\(id)",
-                    title: title,
-                    body: body,
-                    url: url
-                ) }
-            }
+        let preferences = NotificationPreferences(
+            statusChanges: notifyStatusChanges,
+            jobFinished: notifyJobFinished,
+            incidents: notifyIncidents
+        )
+        for event in NotificationPlanner.events(previous: previous, current: current, preferences: preferences) {
+            Task { await Notifications.shared.post(event) }
         }
     }
 
