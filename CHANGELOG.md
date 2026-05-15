@@ -3,6 +3,7 @@
 ## 0.1.4 - Unreleased
 
 - Add opt-in macOS notifications for Blacksmith status changes, new incidents, and finished jobs (#1). Thanks @mvanhorn.
+- Add a menu link to the public Blacksmith status page.
 
 ## 0.1.3 - 2026-05-10
 

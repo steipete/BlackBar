@@ -132,6 +132,10 @@ final class AppModel: ObservableObject {
         NSWorkspace.shared.open(URL(string: "https://app.blacksmith.sh/\(owner)/runs/workflows")!)
     }
 
+    func openBlacksmithStatus() {
+        NSWorkspace.shared.open(URL(string: "https://status.blacksmith.sh/")!)
+    }
+
     func openGitHubActions() {
         let trimmed = repoFilter.trimmingCharacters(in: .whitespacesAndNewlines)
         let urlString = trimmed.isEmpty ? "https://github.com/orgs/\(owner)/actions" : "https://github.com/\(owner)/\(trimmed)/actions"

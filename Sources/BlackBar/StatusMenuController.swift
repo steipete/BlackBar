@@ -75,6 +75,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         self.model.openBlacksmith()
     }
 
+    @objc private func openBlacksmithStatus() {
+        self.model.openBlacksmithStatus()
+    }
+
     @objc private func openGitHubActions() {
         self.model.openGitHubActions()
     }
@@ -117,6 +121,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
         self.menu.addItem(.separator())
         self.menu.addItem(self.actionItem("Open Blacksmith", action: #selector(self.openBlacksmith), image: "hammer"))
+        self.menu.addItem(self.actionItem("Open Blacksmith Status", action: #selector(self.openBlacksmithStatus), image: "waveform.path.ecg"))
         self.menu.addItem(self.actionItem("Open GitHub Actions", action: #selector(self.openGitHubActions), image: "arrow.up.right.square"))
         self.menu.addItem(self.actionItem(self.model.authState == .disconnected ? "Login with GitHub" : "Sign Out", action: #selector(self.loginOrSignOut), image: "person.crop.circle"))
         let updateTitle = SparkleController.shared.updateStatus.isUpdateReady ? "Restart to Update" : "Check for Updates…"
