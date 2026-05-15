@@ -4,6 +4,7 @@
 
 - Add opt-in macOS notifications for Blacksmith status changes, new incidents, and finished jobs (#1). Thanks @mvanhorn.
 - Add a menu link to the public Blacksmith status page.
+- Treat empty or null Blacksmith core-usage API responses as zero usage instead of showing a decode error.
 
 ## 0.1.3 - 2026-05-10
 

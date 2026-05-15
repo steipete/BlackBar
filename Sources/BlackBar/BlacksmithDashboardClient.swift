@@ -95,8 +95,7 @@ struct BlacksmithDashboardClient {
 
     private func fetchCurrentCoreUsage(owner: String) async throws -> CoreUsageSnapshot {
         let data = try await request(path: "user/github/orgs/\(owner)/metrics/core-usage/current")
-        let response = try JSONDecoder().decode(CoreUsageCurrentResponse.self, from: data)
-        return CoreUsageSnapshot(usage: response.currentUsage)
+        return try CoreUsagePayloadDecoder.currentSnapshot(from: data)
     }
 
     private func fetchCoreUsageTimeseries(owner: String) async throws -> [CoreUsageSnapshot] {
@@ -109,8 +108,7 @@ struct BlacksmithDashboardClient {
             URLQueryItem(name: "end_date", value: Self.isoString(from: end))
         ]
         guard let url = components.url else { throw URLError(.badURL) }
-        let response = try JSONDecoder().decode(CoreUsageTimeseriesResponse.self, from: try await request(url: url))
-        return response.timeseries.map { CoreUsageSnapshot(usage: $0.usage) }
+        return try CoreUsagePayloadDecoder.timeseriesSnapshots(from: try await request(url: url))
     }
 
     private static func isoString(from date: Date) -> String {
@@ -120,7 +118,7 @@ struct BlacksmithDashboardClient {
     }
 }
 
-private struct CoreUsageSnapshot {
+struct CoreUsageSnapshot {
     var amd64: CoreUsage
     var arm64: CoreUsage
     var macos: CoreUsage
@@ -130,6 +128,10 @@ private struct CoreUsageSnapshot {
         arm64 = usage.arm64
         macos = usage.macos
     }
+
+    static let empty = CoreUsageSnapshot(
+        usage: CoreUsageResponse(amd64: .zero, arm64: .zero, macos: .zero)
+    )
 
     var total: CoreUsage {
         CoreUsage(
@@ -147,26 +149,76 @@ private struct CoreUsageSnapshot {
     }
 }
 
-private struct CoreUsageCurrentResponse: Decodable {
-    var currentUsage: CoreUsageResponse
+enum CoreUsagePayloadDecoder {
+    static func currentSnapshot(from data: Data) throws -> CoreUsageSnapshot {
+        guard !isEmptyOrNull(data) else { return .empty }
+        let response = try JSONDecoder().decode(CoreUsageCurrentResponse.self, from: data)
+        return response.currentUsage.map(CoreUsageSnapshot.init(usage:)) ?? .empty
+    }
+
+    static func timeseriesSnapshots(from data: Data) throws -> [CoreUsageSnapshot] {
+        guard !isEmptyOrNull(data) else { return [] }
+        let response = try JSONDecoder().decode(CoreUsageTimeseriesResponse.self, from: data)
+        return response.timeseries.map { $0.usage.map(CoreUsageSnapshot.init(usage:)) ?? .empty }
+    }
+
+    private static func isEmptyOrNull(_ data: Data) -> Bool {
+        data.isEmpty || String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines) == "null"
+    }
+}
+
+struct CoreUsageCurrentResponse: Decodable {
+    var currentUsage: CoreUsageResponse?
 
     enum CodingKeys: String, CodingKey {
         case currentUsage = "current_usage"
     }
 }
 
-private struct CoreUsageTimeseriesResponse: Decodable {
+struct CoreUsageTimeseriesResponse: Decodable {
     var timeseries: [CoreUsageTimeseriesPoint]
+
+    enum CodingKeys: String, CodingKey {
+        case timeseries
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        timeseries = try container.decodeIfPresent([CoreUsageTimeseriesPoint].self, forKey: .timeseries) ?? []
+    }
 }
 
-private struct CoreUsageTimeseriesPoint: Decodable {
-    var usage: CoreUsageResponse
+struct CoreUsageTimeseriesPoint: Decodable {
+    var usage: CoreUsageResponse?
 }
 
-private struct CoreUsageResponse: Decodable {
+struct CoreUsageResponse: Decodable {
     var amd64: CoreUsage
     var arm64: CoreUsage
     var macos: CoreUsage
+
+    enum CodingKeys: String, CodingKey {
+        case amd64
+        case arm64
+        case macos
+    }
+
+    init(amd64: CoreUsage, arm64: CoreUsage, macos: CoreUsage) {
+        self.amd64 = amd64
+        self.arm64 = arm64
+        self.macos = macos
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        amd64 = try container.decodeIfPresent(CoreUsage.self, forKey: .amd64) ?? .zero
+        arm64 = try container.decodeIfPresent(CoreUsage.self, forKey: .arm64) ?? .zero
+        macos = try container.decodeIfPresent(CoreUsage.self, forKey: .macos) ?? .zero
+    }
+}
+
+private extension CoreUsage {
+    static let zero = CoreUsage(vcpus: 0, jobs: 0)
 }
 
 struct BlacksmithUser: Decodable {
