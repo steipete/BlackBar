@@ -6,6 +6,7 @@
 - Add a menu link to the public Blacksmith status page.
 - Treat empty or null Blacksmith core-usage API responses as zero usage instead of showing a decode error.
 - Show a stacked 24-hour vCPU usage chart with platform buckets and peak/average stats in the menu.
+- Show a separate Blacksmith workflow run distribution chart with hover details below the vCPU chart.
 - Show richer SwiftUI Blacksmith job rows with branch, actor, PR, runner, commit, and timing details.
 - Only show the menu update action once a Sparkle update is ready to install.
 

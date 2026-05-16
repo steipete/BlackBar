@@ -49,7 +49,7 @@ enum MenuHighlightStyle {
 final class MenuItemHostingView: NSView, MenuItemMeasuring, MenuItemHighlighting {
     private enum Metrics {
         static let proposedHeight: CGFloat = 720
-        static let maxHeight: CGFloat = 280
+        static let maxHeight: CGFloat = 420
         static let fallbackHeight: CGFloat = 28
     }
 

@@ -14,12 +14,20 @@ struct BlacksmithDashboardClient {
     }
 
     func fetchUsage(owner: String, repoFilter: String) async throws -> BlacksmithUsage {
+        let end = Date()
+        let historyStart = end.addingTimeInterval(-24 * 60 * 60)
+
         async let currentCoreUsage = fetchCurrentCoreUsage(owner: owner)
         async let coreUsageSamples = fetchCoreUsageTimeseries(owner: owner)
+        let repoNeedle = repoFilter.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        // The histogram endpoint is org-wide, so hide it when the rest of the view is repo-scoped.
+        async let workflowDistribution: [WorkflowRunDistributionBucket] = repoNeedle.isEmpty
+            ? fetchWorkflowRunDistribution(owner: owner, start: historyStart, end: end)
+            : []
         let core = try await currentCoreUsage
         let samples = (try? await coreUsageSamples) ?? []
+        let distribution = (try? await workflowDistribution) ?? []
 
-        let end = Date()
         let start = end.addingTimeInterval(-12 * 60 * 60)
         var components = URLComponents(url: baseURL.appending(path: "user/github/orgs/\(owner)/metrics/actions/jobs/runs"), resolvingAgainstBaseURL: false)!
         components.queryItems = [
@@ -29,7 +37,6 @@ struct BlacksmithDashboardClient {
         ]
         guard let url = components.url else { throw URLError(.badURL) }
         let jobs = (try? JSONDecoder().decode([BlacksmithJobRun].self, from: try await request(url: url))) ?? []
-        let repoNeedle = repoFilter.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         let relevantJobs = jobs.filter { job in
             guard !repoNeedle.isEmpty else { return true }
             let repo = job.repositoryName.lowercased()
@@ -55,6 +62,7 @@ struct BlacksmithDashboardClient {
             runnerTypes: runnerTypes,
             historyVCPU: samples.map(\.total.vcpus),
             historySamples: samples.map(\.historySample),
+            workflowDistribution: distribution,
             platformUsage: core.platformUsage
         )
     }
@@ -128,13 +136,24 @@ struct BlacksmithDashboardClient {
         return try CoreUsagePayloadDecoder.timeseriesSnapshots(from: try await request(url: url))
     }
 
+    private func fetchWorkflowRunDistribution(owner: String, start: Date, end: Date) async throws -> [WorkflowRunDistributionBucket] {
+        var components = URLComponents(url: baseURL.appending(path: "user/github/orgs/\(owner)/metrics/actions/workflows/runs/histogram"), resolvingAgainstBaseURL: false)!
+        components.queryItems = [
+            URLQueryItem(name: "start_date", value: Self.isoString(from: start)),
+            URLQueryItem(name: "end_date", value: Self.isoString(from: end)),
+            URLQueryItem(name: "bucket_count", value: "24")
+        ]
+        guard let url = components.url else { throw URLError(.badURL) }
+        return try WorkflowRunHistogramDecoder.buckets(from: try await request(url: url))
+    }
+
     private static func isoString(from date: Date) -> String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter.string(from: date)
     }
 
-    private static func date(from string: String?) -> Date? {
+    fileprivate static func date(from string: String?) -> Date? {
         guard let string else { return nil }
         let fractionalFormatter = ISO8601DateFormatter()
         fractionalFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -190,8 +209,31 @@ enum CoreUsagePayloadDecoder {
         return response.timeseries.map { $0.usage.map(CoreUsageSnapshot.init(usage:)) ?? .empty }
     }
 
-    private static func isEmptyOrNull(_ data: Data) -> Bool {
+    fileprivate static func isEmptyOrNull(_ data: Data) -> Bool {
         data.isEmpty || String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines) == "null"
+    }
+}
+
+enum WorkflowRunHistogramDecoder {
+    static func buckets(from data: Data) throws -> [WorkflowRunDistributionBucket] {
+        guard !CoreUsagePayloadDecoder.isEmptyOrNull(data) else { return [] }
+        let response = try JSONDecoder().decode(WorkflowRunHistogramResponse.self, from: data)
+        return response.buckets.compactMap { bucket in
+            guard let start = BlacksmithDashboardClient.date(from: bucket.start),
+                  let end = BlacksmithDashboardClient.date(from: bucket.end)
+            else { return nil }
+            return WorkflowRunDistributionBucket(
+                start: start,
+                end: end,
+                successCount: bucket.successCount,
+                failureCount: bucket.failureCount,
+                cancelledCount: bucket.cancelledCount,
+                inProgressCount: bucket.inProgressCount,
+                queuedCount: bucket.queuedCount,
+                avgDurationSeconds: bucket.avgDurationSeconds,
+                runsWithDuration: bucket.runsWithDuration
+            )
+        }
     }
 }
 
@@ -200,6 +242,43 @@ struct CoreUsageCurrentResponse: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case currentUsage = "current_usage"
+    }
+}
+
+private struct WorkflowRunHistogramResponse: Decodable {
+    var buckets: [WorkflowRunHistogramBucket]
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        buckets = try container.decodeIfPresent([WorkflowRunHistogramBucket].self, forKey: .buckets) ?? []
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case buckets
+    }
+}
+
+private struct WorkflowRunHistogramBucket: Decodable {
+    var start: String
+    var end: String
+    var successCount: Int
+    var failureCount: Int
+    var cancelledCount: Int
+    var inProgressCount: Int
+    var queuedCount: Int
+    var avgDurationSeconds: Double?
+    var runsWithDuration: Int
+
+    enum CodingKeys: String, CodingKey {
+        case start
+        case end
+        case successCount = "success_count"
+        case failureCount = "failure_count"
+        case cancelledCount = "cancelled_count"
+        case inProgressCount = "in_progress_count"
+        case queuedCount = "queued_count"
+        case avgDurationSeconds = "avg_duration_seconds"
+        case runsWithDuration = "runs_with_duration"
     }
 }
 

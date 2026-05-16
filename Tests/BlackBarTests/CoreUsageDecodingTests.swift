@@ -63,4 +63,29 @@ struct CoreUsageDecodingTests {
 
         #expect(snapshots.isEmpty)
     }
+
+    @Test("workflow histogram decodes distribution buckets")
+    func workflowHistogramDecodesDistributionBuckets() throws {
+        let data = Data("""
+        {"buckets":[{"start":"2026-05-15T13:10:00Z","end":"2026-05-15T14:10:02Z","success_count":1662,"failure_count":107,"cancelled_count":845,"in_progress_count":2,"queued_count":3,"total_count":2619,"avg_duration_seconds":48.575,"runs_with_duration":3721}]}
+        """.utf8)
+
+        let buckets = try WorkflowRunHistogramDecoder.buckets(from: data)
+
+        #expect(buckets.count == 1)
+        #expect(buckets[0].successCount == 1662)
+        #expect(buckets[0].failureCount == 107)
+        #expect(buckets[0].cancelledCount == 845)
+        #expect(buckets[0].inProgressCount == 2)
+        #expect(buckets[0].queuedCount == 3)
+        #expect(buckets[0].totalCount == 2619)
+        #expect(buckets[0].avgDurationSeconds == 48.575)
+    }
+
+    @Test("workflow histogram can be an empty body")
+    func workflowHistogramCanBeEmptyBody() throws {
+        let buckets = try WorkflowRunHistogramDecoder.buckets(from: Data())
+
+        #expect(buckets.isEmpty)
+    }
 }

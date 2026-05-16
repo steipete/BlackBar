@@ -21,6 +21,7 @@ let package = Package(
             ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
+                .linkedFramework("Charts"),
                 .linkedFramework("Security"),
                 .linkedFramework("SwiftUI"),
                 .linkedFramework("WebKit")

@@ -62,6 +62,7 @@ struct BlacksmithUsage {
     var runnerTypes: [String] = []
     var historyVCPU: [Int] = []
     var historySamples: [CoreUsageHistorySample] = []
+    var workflowDistribution: [WorkflowRunDistributionBucket] = []
     var platformUsage: [String: CoreUsage] = [:]
 
     var debugSummary: String {
@@ -105,6 +106,24 @@ struct CoreUsageHistorySample: Hashable {
             "arm64": arm64,
             "macos": macos
         ]
+    }
+}
+
+struct WorkflowRunDistributionBucket: Identifiable, Hashable {
+    var start: Date
+    var end: Date
+    var successCount: Int
+    var failureCount: Int
+    var cancelledCount: Int
+    var inProgressCount: Int
+    var queuedCount: Int
+    var avgDurationSeconds: Double?
+    var runsWithDuration: Int
+
+    var id: Date { start }
+
+    var totalCount: Int {
+        successCount + failureCount + cancelledCount + inProgressCount + queuedCount
     }
 }
 
