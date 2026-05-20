@@ -2,6 +2,7 @@
 
 ## 0.2.1 - Unreleased
 
+- Add a General setting to launch BlackBar automatically at login.
 - Document the Homebrew cask install command in the README.
 
 ## 0.2.0 - 2026-05-16

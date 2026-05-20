@@ -107,6 +107,15 @@ private struct GeneralSettingsView: View {
                 }
             }
 
+            Section("Startup") {
+                Toggle("Launch BlackBar at login", isOn: self.$model.launchAtLoginEnabled)
+                if let note = self.model.launchAtLoginStatusNote {
+                    Text(note)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section("Account") {
                 LabeledContent("Status", value: self.model.authState.label)
                 HStack {
@@ -137,6 +146,9 @@ private struct GeneralSettingsView: View {
         }
         .formStyle(.grouped)
         .padding(20)
+        .onAppear {
+            self.model.refreshLaunchAtLoginState()
+        }
     }
 }
 

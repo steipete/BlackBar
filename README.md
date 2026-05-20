@@ -80,9 +80,10 @@ Defaults:
 | Organization | `openclaw` |
 | Repository filter | _(empty — all visible org usage)_ |
 | Refresh interval | `60s` |
+| Launch at login | Off |
 
 Use **Settings…** from the menu to change the org, an optional repo filter, or
-the polling interval.
+the polling interval. You can also enable launch at login from the General tab.
 
 ## How it works
 
