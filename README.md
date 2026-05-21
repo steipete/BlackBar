@@ -35,6 +35,8 @@ electron. No telemetry. No servers in between.
   isn't available.
 - **18-bar history graph** of recent activity, crammed into 54 pixels next to
   the count.
+- Right-click the menu bar item to copy the activity graph as PNG.
+  Shift-right-click saves to `~/Downloads`.
 
 ## Install
 

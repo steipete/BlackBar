@@ -1,4 +1,5 @@
 import AppKit
+import os
 import SwiftUI
 
 @MainActor
@@ -13,6 +14,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private let menu = NSMenu()
     private var timer: Timer?
+    private let logger = Logger(subsystem: "com.steipete.blackbar", category: "GraphExport")
 
     init(model: AppModel, statusBar: NSStatusBar = .system) {
         self.model = model
@@ -26,8 +28,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         let item = self.statusBar.statusItem(withLength: NSStatusItem.variableLength)
         item.autosaveName = "blackbar-main-v2"
         item.isVisible = true
-        item.menu = self.menu
         item.button?.imageScaling = .scaleNone
+        item.button?.target = self
+        item.button?.action = #selector(self.statusItemClicked)
+        item.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         self.statusItem = item
 
         self.model.onSnapshotChange = { [weak self] in
@@ -53,6 +57,20 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             self.statusBar.removeStatusItem(statusItem)
         }
         self.statusItem = nil
+    }
+
+    @objc private func statusItemClicked() {
+        guard let event = NSApp.currentEvent else {
+            self.showMenu()
+            return
+        }
+
+        switch event.type {
+        case .rightMouseUp:
+            self.exportGraph(saveToDownloads: event.modifierFlags.contains(.shift))
+        default:
+            self.showMenu()
+        }
     }
 
     func menuWillOpen(_ menu: NSMenu) {
@@ -114,6 +132,30 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     @objc private func quit() {
         NSApp.terminate(nil)
+    }
+
+    private func showMenu() {
+        guard let statusItem else { return }
+        statusItem.menu = self.menu
+        statusItem.button?.performClick(nil)
+        statusItem.menu = nil
+    }
+
+    private func exportGraph(saveToDownloads: Bool) {
+        let image = StatusBarImage.renderGraphForExport(
+            history: self.model.history,
+            active: self.model.snapshot.usage.activeVCPU
+        )
+
+        do {
+            if saveToDownloads {
+                _ = try GraphExport.saveToDownloads(image)
+            } else {
+                try GraphExport.writeToPasteboard(image)
+            }
+        } catch {
+            self.logger.error("Failed to export activity graph: \(error.localizedDescription, privacy: .public)")
+        }
     }
 
     private func rebuildMenu() {
@@ -297,7 +339,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         button.font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
         button.image = image
         button.imagePosition = .imageRight
-        button.toolTip = "BlackBar: \(self.model.snapshot.usage.activeVCPU) active vCPU, \(self.model.snapshot.usage.activeJobs) active jobs"
+        button.toolTip = "BlackBar: \(self.model.snapshot.usage.activeVCPU) active vCPU, \(self.model.snapshot.usage.activeJobs) active jobs. Right-click to copy the graph as PNG."
     }
 
     private func statusTitle() -> String {
