@@ -1,6 +1,5 @@
 import AppKit
 import Foundation
-import ServiceManagement
 
 @MainActor
 final class AppModel: ObservableObject {
@@ -40,11 +39,10 @@ final class AppModel: ObservableObject {
     }
     @Published var launchAtLoginEnabled: Bool {
         didSet {
-            guard !isSyncingLaunchAtLoginState else { return }
+            defaults.set(launchAtLoginEnabled, forKey: DefaultsKey.launchAtLoginEnabled)
             updateLaunchAtLogin(enabled: launchAtLoginEnabled)
         }
     }
-    @Published private(set) var launchAtLoginStatusNote: String?
 
     var onSnapshotChange: (() -> Void)?
     var onPollIntervalChange: ((TimeInterval) -> Void)?
@@ -53,7 +51,6 @@ final class AppModel: ObservableObject {
     private let keychain = Keychain(service: "com.steipete.blackbar")
     private var loginWindow: BlacksmithLoginWindowController?
     private var cachedCookieHeader: String?
-    private var isSyncingLaunchAtLoginState = false
 
     init() {
         owner = defaults.string(forKey: DefaultsKey.owner) ?? "openclaw"
@@ -64,8 +61,13 @@ final class AppModel: ObservableObject {
         notifyStatusChanges = defaults.bool(forKey: DefaultsKey.notifyStatusChanges)
         notifyJobFinished = defaults.bool(forKey: DefaultsKey.notifyJobFinished)
         notifyIncidents = defaults.bool(forKey: DefaultsKey.notifyIncidents)
-        launchAtLoginEnabled = Self.isLaunchAtLoginRequested
-        launchAtLoginStatusNote = Self.launchAtLoginStatusNote
+        if let savedLaunchAtLogin = defaults.object(forKey: DefaultsKey.launchAtLoginEnabled) as? Bool {
+            launchAtLoginEnabled = savedLaunchAtLogin
+        } else {
+            launchAtLoginEnabled = LaunchAtLoginManager.isEnabled
+            defaults.set(launchAtLoginEnabled, forKey: DefaultsKey.launchAtLoginEnabled)
+        }
+        updateLaunchAtLogin(enabled: launchAtLoginEnabled)
         Task { await loadAuthState() }
     }
 
@@ -155,10 +157,6 @@ final class AppModel: ObservableObject {
         }
     }
 
-    func refreshLaunchAtLoginState() {
-        syncLaunchAtLoginState()
-    }
-
     private func currentCookieHeader() throws -> String {
         if let cachedCookieHeader, !cachedCookieHeader.isEmpty {
             return cachedCookieHeader
@@ -217,49 +215,9 @@ final class AppModel: ObservableObject {
 
     private func updateLaunchAtLogin(enabled: Bool) {
         do {
-            let service = SMAppService.mainApp
-            if enabled {
-                if service.status == .notRegistered {
-                    try service.register()
-                }
-            } else if service.status != .notRegistered {
-                try service.unregister()
-            }
-            syncLaunchAtLoginState()
+            try LaunchAtLoginManager.setEnabled(enabled)
         } catch {
             snapshot = snapshot.with(error: "Launch at login: \(Self.errorMessage(error))")
-            syncLaunchAtLoginState()
-        }
-    }
-
-    private func syncLaunchAtLoginState() {
-        isSyncingLaunchAtLoginState = true
-        launchAtLoginEnabled = Self.isLaunchAtLoginRequested
-        launchAtLoginStatusNote = Self.launchAtLoginStatusNote
-        isSyncingLaunchAtLoginState = false
-    }
-
-    private static var isLaunchAtLoginRequested: Bool {
-        switch SMAppService.mainApp.status {
-        case .enabled, .requiresApproval:
-            true
-        case .notRegistered, .notFound:
-            false
-        @unknown default:
-            false
-        }
-    }
-
-    private static var launchAtLoginStatusNote: String? {
-        switch SMAppService.mainApp.status {
-        case .requiresApproval:
-            "Allow BlackBar in System Settings > Login Items to finish enabling launch at login."
-        case .notFound:
-            "Launch at login is unavailable until BlackBar is inside an app bundle."
-        case .enabled, .notRegistered:
-            nil
-        @unknown default:
-            nil
         }
     }
 
@@ -301,6 +259,7 @@ enum DefaultsKey {
     static let notifyStatusChanges = "notifyStatusChanges"
     static let notifyJobFinished = "notifyJobFinished"
     static let notifyIncidents = "notifyIncidents"
+    static let launchAtLoginEnabled = "launchAtLoginEnabled"
 }
 
 enum AppError: LocalizedError {

@@ -6,7 +6,7 @@ build:
 	swift build -c release
 
 app: build
-	SKIP_BUILD=1 ./Scripts/package_app.sh release
+	./Scripts/package_app.sh release
 	rm -rf "build/$(APP_NAME).app"
 	mkdir -p build
 	APP_DIR=".build/apple/Products/Release/$(APP_NAME).app"; \

@@ -1,8 +1,11 @@
 # Changelog
 
-## 0.2.1 - Unreleased
+## 0.2.1 - 2026-05-21
 
 - Add a General setting to launch BlackBar automatically at login.
+- Move Blacksmith account status, login actions, and account links into a dedicated Account settings tab.
+- Store the launch-at-login preference and apply it at startup instead of showing a false unavailable state in local builds.
+- Show the app version from bundle metadata in the About settings pane.
 - Document the Homebrew cask install command in the README.
 
 ## 0.2.0 - 2026-05-16

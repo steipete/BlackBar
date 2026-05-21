@@ -12,6 +12,9 @@ struct SettingsView: View {
             GeneralSettingsView(model: self.model)
                 .tabItem { Label("General", systemImage: "gear") }
                 .tag(SettingsTab.general)
+            AccountSettingsView(model: self.model)
+                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+                .tag(SettingsTab.account)
             DashboardSettingsView(model: self.model)
                 .tabItem { Label("Dashboard", systemImage: "chart.bar.xaxis") }
                 .tag(SettingsTab.dashboard)
@@ -65,6 +68,7 @@ struct SettingsView: View {
 
 enum SettingsTab: CaseIterable, Hashable {
     case general
+    case account
     case dashboard
     case notifications
     case about
@@ -76,6 +80,7 @@ enum SettingsTab: CaseIterable, Hashable {
     var title: String {
         switch self {
         case .general: "General"
+        case .account: "Account"
         case .dashboard: "Dashboard"
         case .notifications: "Notifications"
         case .about: "About"
@@ -109,14 +114,20 @@ private struct GeneralSettingsView: View {
 
             Section("Startup") {
                 Toggle("Launch BlackBar at login", isOn: self.$model.launchAtLoginEnabled)
-                if let note = self.model.launchAtLoginStatusNote {
-                    Text(note)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
             }
 
-            Section("Account") {
+        }
+        .formStyle(.grouped)
+        .padding(20)
+    }
+}
+
+private struct AccountSettingsView: View {
+    @ObservedObject var model: AppModel
+
+    var body: some View {
+        Form {
+            Section("Blacksmith Account") {
                 LabeledContent("Status", value: self.model.authState.label)
                 HStack {
                     Button(self.model.authState == .disconnected ? "Login with GitHub" : "Sign Out") {
@@ -146,9 +157,6 @@ private struct GeneralSettingsView: View {
         }
         .formStyle(.grouped)
         .padding(20)
-        .onAppear {
-            self.model.refreshLaunchAtLoginState()
-        }
     }
 }
 
@@ -271,7 +279,7 @@ private struct AboutSettingsView: View {
                 .font(.title2.weight(.semibold))
             Text("Blacksmith status and active vCPU in the macOS menu bar.")
                 .foregroundStyle(.secondary)
-            Text("0.1.0")
+            Text(Self.versionLabel)
                 .font(.caption)
                 .foregroundStyle(.tertiary)
 
@@ -306,5 +314,10 @@ private struct AboutSettingsView: View {
                 SparkleController.shared.automaticallyDownloadsUpdates = newValue
             }
         }
+    }
+
+    private static var versionLabel: String {
+        (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)
+            .flatMap { $0.isEmpty ? nil : $0 } ?? "Development"
     }
 }
