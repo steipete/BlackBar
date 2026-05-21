@@ -4,12 +4,6 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 ZIP=${1:?"Usage: $0 BlackBar-<version>.zip"}
 FEED_URL=${2:-"https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml"}
-PRIVATE_KEY_FILE=${SPARKLE_PRIVATE_KEY_FILE:-}
-
-if [[ -z "$PRIVATE_KEY_FILE" ]]; then
-  echo "Set SPARKLE_PRIVATE_KEY_FILE to your Sparkle ed25519 private key." >&2
-  exit 1
-fi
 [[ -f "$ZIP" ]] || { echo "Zip not found: $ZIP" >&2; exit 1; }
 
 ZIP_DIR=$(cd "$(dirname "$ZIP")" && pwd)
@@ -47,8 +41,20 @@ cp "$NOTES_HTML" "$WORK_DIR/$ZIP_BASE.html"
 DOWNLOAD_URL_PREFIX=${SPARKLE_DOWNLOAD_URL_PREFIX:-"https://github.com/steipete/BlackBar/releases/download/v${VERSION}/"}
 
 pushd "$WORK_DIR" >/dev/null
+KEY_ARGS=()
+if [[ -n "${SPARKLE_PRIVATE_KEY_FILE:-}" ]]; then
+  [[ -f "$SPARKLE_PRIVATE_KEY_FILE" ]] || { echo "Sparkle key file not found: $SPARKLE_PRIVATE_KEY_FILE" >&2; exit 1; }
+  KEY_ARGS=(--ed-key-file "$SPARKLE_PRIVATE_KEY_FILE")
+else
+  expected_key=$(/usr/libexec/PlistBuddy -c 'Print :SUPublicEDKey' "$ROOT/Resources/Info.plist")
+  actual_key=$(generate_keys -p)
+  if [[ "$actual_key" != "$expected_key" ]]; then
+    echo "Default Sparkle keychain key does not match BlackBar SUPublicEDKey." >&2
+    exit 1
+  fi
+fi
 generate_appcast \
-  --ed-key-file "$PRIVATE_KEY_FILE" \
+  "${KEY_ARGS[@]}" \
   --download-url-prefix "$DOWNLOAD_URL_PREFIX" \
   --embed-release-notes \
   --link "$FEED_URL" \

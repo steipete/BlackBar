@@ -20,8 +20,16 @@ swift build -c release
 
 "$ROOT/Scripts/sign-and-notarize.sh"
 
-KEY_FILE=$(clean_key "$SPARKLE_PRIVATE_KEY_FILE")
-probe_sparkle_key "$KEY_FILE"
+KEY_FILE=""
+if [[ -n "${SPARKLE_PRIVATE_KEY_FILE:-}" ]]; then
+  KEY_FILE=$(clean_key "$SPARKLE_PRIVATE_KEY_FILE")
+  probe_sparkle_key "$KEY_FILE"
+else
+  probe=$(mktemp /tmp/blackbar-sparkle-keychain.XXXX)
+  echo test > "$probe"
+  sign_update -p "$probe" >/dev/null
+  rm -f "$probe"
+fi
 clear_sparkle_caches "$BUNDLE_ID"
 
 NOTES_MD=$(mktemp /tmp/blackbar-notes.XXXX.md)
@@ -35,12 +43,19 @@ gh release create "$TAG" "${APP_NAME}-${MARKETING_VERSION}.zip" "${APP_NAME}-${M
   --title "${APP_NAME} ${MARKETING_VERSION}" \
   --notes-file "$NOTES_MD"
 
-SPARKLE_PRIVATE_KEY_FILE="$KEY_FILE" \
-  "$ROOT/Scripts/make_appcast.sh" \
-  "${APP_NAME}-${MARKETING_VERSION}.zip" \
-  "https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml"
-
-verify_appcast_entry "$APPCAST" "$MARKETING_VERSION" "$KEY_FILE"
+if [[ -n "$KEY_FILE" ]]; then
+  SPARKLE_PRIVATE_KEY_FILE="$KEY_FILE" \
+    "$ROOT/Scripts/make_appcast.sh" \
+    "${APP_NAME}-${MARKETING_VERSION}.zip" \
+    "https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml"
+  SPARKLE_PRIVATE_KEY_FILE="$KEY_FILE" "$ROOT/Scripts/verify_appcast.sh" "$MARKETING_VERSION"
+else
+  env -u SPARKLE_PRIVATE_KEY_FILE \
+    "$ROOT/Scripts/make_appcast.sh" \
+    "${APP_NAME}-${MARKETING_VERSION}.zip" \
+    "https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml"
+  env -u SPARKLE_PRIVATE_KEY_FILE "$ROOT/Scripts/verify_appcast.sh" "$MARKETING_VERSION"
+fi
 
 git add "$APPCAST"
 git commit -m "docs: update appcast for ${MARKETING_VERSION}"

@@ -5,23 +5,32 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 VERSION=${1:-$(source "$ROOT/version.env" && echo "$MARKETING_VERSION")}
 APPCAST="$ROOT/appcast.xml"
 
-if [[ -z "${SPARKLE_PRIVATE_KEY_FILE:-}" ]]; then
-  echo "SPARKLE_PRIVATE_KEY_FILE is required" >&2
-  exit 1
-fi
-[[ -f "$SPARKLE_PRIVATE_KEY_FILE" ]] || { echo "Sparkle key file not found: $SPARKLE_PRIVATE_KEY_FILE" >&2; exit 1; }
 [[ -f "$APPCAST" ]] || { echo "appcast.xml not found at $APPCAST" >&2; exit 1; }
 
-key_lines=$(grep -v '^[[:space:]]*#' "$SPARKLE_PRIVATE_KEY_FILE" | sed '/^[[:space:]]*$/d')
-if [[ $(printf "%s\n" "$key_lines" | wc -l) -ne 1 ]]; then
-  echo "Sparkle key file must contain exactly one base64 line (no comments/blank lines)." >&2
-  exit 1
+KEY_ARGS=()
+KEY_FILE=""
+if [[ -n "${SPARKLE_PRIVATE_KEY_FILE:-}" ]]; then
+  [[ -f "$SPARKLE_PRIVATE_KEY_FILE" ]] || { echo "Sparkle key file not found: $SPARKLE_PRIVATE_KEY_FILE" >&2; exit 1; }
+  key_lines=$(grep -v '^[[:space:]]*#' "$SPARKLE_PRIVATE_KEY_FILE" | sed '/^[[:space:]]*$/d')
+  if [[ $(printf "%s\n" "$key_lines" | wc -l) -ne 1 ]]; then
+    echo "Sparkle key file must contain exactly one base64 line (no comments/blank lines)." >&2
+    exit 1
+  fi
+  KEY_FILE=$(mktemp)
+  printf "%s" "$key_lines" > "$KEY_FILE"
+  KEY_ARGS=(--ed-key-file "$KEY_FILE")
+else
+  expected_key=$(/usr/libexec/PlistBuddy -c 'Print :SUPublicEDKey' "$ROOT/Resources/Info.plist")
+  actual_key=$(generate_keys -p)
+  if [[ "$actual_key" != "$expected_key" ]]; then
+    echo "Default Sparkle keychain key does not match BlackBar SUPublicEDKey." >&2
+    exit 1
+  fi
 fi
-KEY_FILE=$(mktemp)
 TMP_ZIP=$(mktemp /tmp/blackbar-enclosure.XXXX.zip)
 TMP_META=$(mktemp /tmp/blackbar-enclosure.XXXX.meta)
-printf "%s" "$key_lines" > "$KEY_FILE"
-trap 'rm -f "$KEY_FILE" "$TMP_ZIP" "$TMP_META"' EXIT
+TMP_DIR=$(mktemp -d /tmp/blackbar-enclosure.XXXX)
+trap 'rm -f "$KEY_FILE" "$TMP_ZIP" "$TMP_META"; rm -rf "$TMP_DIR"' EXIT
 
 python3 - "$APPCAST" "$VERSION" > "$TMP_META" <<'PY'
 import sys
@@ -69,5 +78,14 @@ if [[ "$LEN_ACTUAL" != "$LEN_EXPECTED" ]]; then
 fi
 
 echo "Verifying Sparkle signature"
-sign_update --verify "$TMP_ZIP" "$SIG" --ed-key-file "$KEY_FILE"
+sign_update --verify "$TMP_ZIP" "$SIG" "${KEY_ARGS[@]}"
+
+/usr/bin/ditto -x -k --norsrc "$TMP_ZIP" "$TMP_DIR"
+APP_BUNDLE=$(find "$TMP_DIR" -maxdepth 2 -name "BlackBar.app" -not -path "*/__MACOSX/*" | head -n 1)
+[[ -n "$APP_BUNDLE" ]] || { echo "No BlackBar.app found in enclosure" >&2; exit 1; }
+
+echo "Verifying codesign and notarization"
+codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
+spctl --assess --type execute --verbose "$APP_BUNDLE"
+stapler validate "$APP_BUNDLE"
 echo "Appcast entry for $VERSION verified."
