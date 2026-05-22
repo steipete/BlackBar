@@ -3,6 +3,22 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.2.2</title>
+            <pubDate>Fri, 22 May 2026 14:33:47 +0100</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>0.2.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>BlackBar 0.2.2</h2>
+<ul>
+<li>Add right-click PNG export from the menu graphs, including labeled vCPU and workflow-run snapshots (#2). Thanks @mvanhorn.</li>
+<li>Clarify Sparkle signing key ownership and validate release signing keys against the embedded public key.</li>
+</ul>
+<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.2/BlackBar-0.2.2.zip" length="2097066" type="application/octet-stream" sparkle:edSignature="OcF7Gp/9cj8De79zwRaKIrzHKW674t/Q2nN4tCrACL5FZBM9PqYUyzrTeFM9UHv1Q85LEoXhDRMm0ZrZzo4bDg=="/>
+        </item>
+        <item>
             <title>0.2.1</title>
             <pubDate>Thu, 21 May 2026 14:51:50 +0100</pubDate>
             <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
@@ -23,17 +39,6 @@
             <description><![CDATA[<ul><li>Add opt-in macOS notifications for Blacksmith status changes, new incidents, and finished jobs (#1). Thanks @mvanhorn.</li><li>Add a menu link to the public Blacksmith status page.</li><li>Treat empty or null Blacksmith core-usage API responses as zero usage instead of showing a decode error.</li><li>Show a stacked 24-hour vCPU usage chart with platform buckets and peak/average stats in the menu.</li><li>Show a separate Blacksmith workflow run distribution chart with hover details below the vCPU chart.</li><li>Show richer SwiftUI Blacksmith job rows with branch, actor, PR, runner, commit, and timing details.</li><li>Move the Blacksmith status indicator into a compact status-page menu badge unless there is an active notice.</li><li>Keep the menu bar title compact while including active job count in the tooltip and menu.</li><li>Only show the menu update action once a Sparkle update is ready to install.</li></ul>
 ]]></description>
             <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.0/BlackBar-0.2.0.zip" length="2040543" type="application/octet-stream" sparkle:edSignature="WtemHUjBYsckNPXC1YVi7DqSoybDXuJOlnzdmqpCRdRl5vJk760DsQLg9HIg2L52sTSci1YOdBCsX9CArxlOAg=="/>
-        </item>
-        <item>
-            <title>0.1.3</title>
-            <pubDate>Sun, 10 May 2026 13:06:11 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>4</sparkle:version>
-            <sparkle:shortVersionString>0.1.3</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<ul><li>Move GitHub release, appcast, documentation, and update-feed references to `steipete/BlackBar`.</li></ul>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.1.3/BlackBar-0.1.3.zip" length="1636051" type="application/octet-stream" sparkle:edSignature="IpfBN7hH/ogSuRthGqvH2Hlqc3a4XKNCHYPDYU6G9FOStjCM1UkxHGQQmgNXVt1zsiSKfQO4rxKO+KmlL9h7DQ=="/>
         </item>
     </channel>
 </rss>
