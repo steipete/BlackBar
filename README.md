@@ -82,9 +82,10 @@ Defaults:
 | Organization | `openclaw` |
 | Repository filter | _(empty — all visible org usage)_ |
 | Refresh interval | `60s` |
+| Launch at login | Off |
 
 Use **Settings…** from the menu to change the org, an optional repo filter, or
-the polling interval.
+the polling interval. You can also enable launch at login from the General tab.
 
 ## How it works
 
@@ -129,12 +130,17 @@ Source layout:
 BlackBar uses the same Sparkle release shape as the rest of the openclaw
 toolchain.
 
+Release wrappers in this repo delegate shared appcast/signing/release logic to
+the `mac-app-release` skill in `agent-scripts`. Keep `agent-scripts` next to
+this checkout or at `~/Projects/agent-scripts`, or set
+`MAC_RELEASE_TOOL=/path/to/mac-release`.
+
 | File | Owns |
 | --- | --- |
 | `version.env` | `MARKETING_VERSION` and `BUILD_NUMBER` |
 | `CHANGELOG.md` | release notes |
 | `appcast.xml` | Sparkle feed (signed) |
-| `Resources/Info.plist` | Sparkle public ed25519 key |
+| `Resources/Info.plist` | Sparkle public EdDSA key (`SUPublicEDKey`) |
 
 Pipeline scripts under `Scripts/`:
 
@@ -143,8 +149,11 @@ Pipeline scripts under `Scripts/`:
   XPC services.
 - `sign-and-notarize.sh` — builds, signs, notarizes, staples, zips.
 - `release.sh` — tags, publishes the GitHub release, uploads app + dSYM zips,
-  updates `appcast.xml`, verifies enclosure length and ed25519 signature.
-- `verify_appcast.sh` — appcast sanity check.
+  updates `appcast.xml`, verifies Sparkle signatures, codesigning, notarization,
+  and the signing key's public-key match.
+- `verify_appcast.sh` — validates a published appcast entry and downloaded app.
+- `sparkle_key_status.sh` — shows the embedded public key and active signing
+  key public key without printing private key material.
 - `test_live_update.sh` — smoke-tests an update from the previous release.
 
 Required release env:
@@ -153,8 +162,26 @@ Required release env:
 export APP_STORE_CONNECT_API_KEY_P8='...'
 export APP_STORE_CONNECT_KEY_ID='...'
 export APP_STORE_CONNECT_ISSUER_ID='...'
-export SPARKLE_PRIVATE_KEY_FILE=/path/to/sparkle-ed25519.key
 ```
+
+Sparkle signing uses the macOS Keychain by default:
+
+- Keychain service: `https://sparkle-project.org`
+- Keychain account: `ed25519`
+- Item label: `Private key for signing Sparkle updates`
+- Public key must match `SUPublicEDKey` in `Resources/Info.plist`
+
+Sparkle keys may be shared by multiple apps. Every app that shares the private
+key must embed the same public key. Check the current key without exposing the
+private key:
+
+```sh
+Scripts/sparkle_key_status.sh
+```
+
+`SPARKLE_PRIVATE_KEY_FILE=/path/to/sparkle-ed25519.key` is supported only as an
+explicit override. The release scripts reject either Keychain or file keys when
+their public key does not match `SUPublicEDKey`.
 
 Cut a release:
 

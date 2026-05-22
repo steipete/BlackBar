@@ -37,6 +37,12 @@ final class AppModel: ObservableObject {
             if notifyIncidents { Task { await Notifications.shared.requestAuthorizationIfNeeded() } }
         }
     }
+    @Published var launchAtLoginEnabled: Bool {
+        didSet {
+            defaults.set(launchAtLoginEnabled, forKey: DefaultsKey.launchAtLoginEnabled)
+            updateLaunchAtLogin(enabled: launchAtLoginEnabled)
+        }
+    }
 
     var onSnapshotChange: (() -> Void)?
     var onPollIntervalChange: ((TimeInterval) -> Void)?
@@ -55,6 +61,13 @@ final class AppModel: ObservableObject {
         notifyStatusChanges = defaults.bool(forKey: DefaultsKey.notifyStatusChanges)
         notifyJobFinished = defaults.bool(forKey: DefaultsKey.notifyJobFinished)
         notifyIncidents = defaults.bool(forKey: DefaultsKey.notifyIncidents)
+        if let savedLaunchAtLogin = defaults.object(forKey: DefaultsKey.launchAtLoginEnabled) as? Bool {
+            launchAtLoginEnabled = savedLaunchAtLogin
+        } else {
+            launchAtLoginEnabled = LaunchAtLoginManager.isEnabled
+            defaults.set(launchAtLoginEnabled, forKey: DefaultsKey.launchAtLoginEnabled)
+        }
+        updateLaunchAtLogin(enabled: launchAtLoginEnabled)
         Task { await loadAuthState() }
     }
 
@@ -200,6 +213,14 @@ final class AppModel: ObservableObject {
         }
     }
 
+    private func updateLaunchAtLogin(enabled: Bool) {
+        do {
+            try LaunchAtLoginManager.setEnabled(enabled)
+        } catch {
+            snapshot = snapshot.with(error: "Launch at login: \(Self.errorMessage(error))")
+        }
+    }
+
     private static func errorMessage(_ error: Error) -> String {
         if let decodingError = error as? DecodingError {
             switch decodingError {
@@ -238,6 +259,7 @@ enum DefaultsKey {
     static let notifyStatusChanges = "notifyStatusChanges"
     static let notifyJobFinished = "notifyJobFinished"
     static let notifyIncidents = "notifyIncidents"
+    static let launchAtLoginEnabled = "launchAtLoginEnabled"
 }
 
 enum AppError: LocalizedError {
