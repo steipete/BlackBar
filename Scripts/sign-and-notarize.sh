@@ -20,11 +20,11 @@ if [[ -z "${APP_STORE_CONNECT_API_KEY_P8:-}" || -z "${APP_STORE_CONNECT_KEY_ID:-
 fi
 
 printf '%s\n' "$APP_STORE_CONNECT_API_KEY_P8" | sed 's/\\n/\n/g; 1s/^"//; $s/"$//' > "$API_KEY_PATH"
+trap 'rm -f "$API_KEY_PATH" "$PKCS8_API_KEY_PATH" "$NOTARY_ZIP"' EXIT
 if grep -q "BEGIN EC PRIVATE KEY" "$API_KEY_PATH"; then
   openssl pkcs8 -topk8 -nocrypt -in "$API_KEY_PATH" -out "$PKCS8_API_KEY_PATH"
   mv "$PKCS8_API_KEY_PATH" "$API_KEY_PATH"
 fi
-trap 'rm -f "$API_KEY_PATH" "$PKCS8_API_KEY_PATH" "$NOTARY_ZIP"' EXIT
 
 swift build -c release --arch arm64 --arch x86_64
 SKIP_BUILD=1 CODESIGN_IDENTITY="$APP_IDENTITY" "$ROOT/Scripts/package_app.sh" release
