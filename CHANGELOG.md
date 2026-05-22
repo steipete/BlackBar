@@ -2,6 +2,7 @@
 
 ## 0.2.1 - Unreleased
 
+- Add right-click PNG export for the activity graph, with Shift-right-click saving to Downloads (#2). Thanks @mvanhorn.
 - Document the Homebrew cask install command in the README.
 
 ## 0.2.0 - 2026-05-16

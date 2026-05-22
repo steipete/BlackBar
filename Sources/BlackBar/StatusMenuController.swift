@@ -339,7 +339,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         button.font = NSFont.monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
         button.image = image
         button.imagePosition = .imageRight
-        button.toolTip = "BlackBar: \(self.model.snapshot.usage.activeVCPU) active vCPU, \(self.model.snapshot.usage.activeJobs) active jobs. Right-click to copy the graph as PNG."
+        button.toolTip = "BlackBar: \(self.model.snapshot.usage.activeVCPU) active vCPU, \(self.model.snapshot.usage.activeJobs) active jobs. Right-click to copy the graph as PNG; Shift-right-click saves it to Downloads."
     }
 
     private func statusTitle() -> String {
