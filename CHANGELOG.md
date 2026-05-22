@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.2.3 - Unreleased
+
 ## 0.2.2 - 2026-05-22
 
 - Add right-click PNG export from the menu graphs, including labeled vCPU and workflow-run snapshots (#2). Thanks @mvanhorn.
