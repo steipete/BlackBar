@@ -19,7 +19,7 @@ if [[ -z "${APP_STORE_CONNECT_API_KEY_P8:-}" || -z "${APP_STORE_CONNECT_KEY_ID:-
   exit 1
 fi
 
-echo "$APP_STORE_CONNECT_API_KEY_P8" | sed 's/\\n/\n/g' > "$API_KEY_PATH"
+printf '%s\n' "$APP_STORE_CONNECT_API_KEY_P8" | sed 's/\\n/\n/g; 1s/^"//; $s/"$//' > "$API_KEY_PATH"
 if grep -q "BEGIN EC PRIVATE KEY" "$API_KEY_PATH"; then
   openssl pkcs8 -topk8 -nocrypt -in "$API_KEY_PATH" -out "$PKCS8_API_KEY_PATH"
   mv "$PKCS8_API_KEY_PATH" "$API_KEY_PATH"
