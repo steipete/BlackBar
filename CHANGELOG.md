@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.2.4 - Unreleased
+
 ## 0.2.3 - 2026-06-11
 
 - Remove temporary App Store Connect key material when notarization key conversion fails.
