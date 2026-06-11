@@ -3,6 +3,21 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.2.3</title>
+            <pubDate>Thu, 11 Jun 2026 08:03:13 +0100</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+            <sparkle:version>8</sparkle:version>
+            <sparkle:shortVersionString>0.2.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>BlackBar 0.2.3</h2>
+<ul>
+<li>Remove temporary App Store Connect key material when notarization key conversion fails.</li>
+</ul>
+<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.3/BlackBar-0.2.3.zip" length="2097078" type="application/octet-stream" sparkle:edSignature="5v3/YDu/gSaYNmJrFtHJTBgMO/ot2he0Z19RZmkP8t1aMaP1kykt7MARFIk9ZQ/JLawlWz9l8h8KEbSgqDaOCA=="/>
+        </item>
+        <item>
             <title>0.2.2</title>
             <pubDate>Fri, 22 May 2026 14:33:47 +0100</pubDate>
             <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
@@ -28,17 +43,6 @@
             <description><![CDATA[<ul><li>Add a General setting to launch BlackBar automatically at login.</li><li>Move Blacksmith account status, login actions, and account links into a dedicated Account settings tab.</li><li>Store the launch-at-login preference and apply it at startup instead of showing a false unavailable state in local builds.</li><li>Show the app version from bundle metadata in the About settings pane.</li><li>Document the Homebrew cask install command in the README.</li></ul>
 ]]></description>
             <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.1/BlackBar-0.2.1.zip" length="2049646" type="application/octet-stream" sparkle:edSignature="y/ozInj+p5ogx1pV+VOgFNVXox7gNcpSlyeELFsyuDOPdyO8mR53hLaPybz0qW0ShXtOPF0z6FsyQFvueQ9tAw=="/>
-        </item>
-        <item>
-            <title>0.2.0</title>
-            <pubDate>Sat, 16 May 2026 15:06:05 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>5</sparkle:version>
-            <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<ul><li>Add opt-in macOS notifications for Blacksmith status changes, new incidents, and finished jobs (#1). Thanks @mvanhorn.</li><li>Add a menu link to the public Blacksmith status page.</li><li>Treat empty or null Blacksmith core-usage API responses as zero usage instead of showing a decode error.</li><li>Show a stacked 24-hour vCPU usage chart with platform buckets and peak/average stats in the menu.</li><li>Show a separate Blacksmith workflow run distribution chart with hover details below the vCPU chart.</li><li>Show richer SwiftUI Blacksmith job rows with branch, actor, PR, runner, commit, and timing details.</li><li>Move the Blacksmith status indicator into a compact status-page menu badge unless there is an active notice.</li><li>Keep the menu bar title compact while including active job count in the tooltip and menu.</li><li>Only show the menu update action once a Sparkle update is ready to install.</li></ul>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.0/BlackBar-0.2.0.zip" length="2040543" type="application/octet-stream" sparkle:edSignature="WtemHUjBYsckNPXC1YVi7DqSoybDXuJOlnzdmqpCRdRl5vJk760DsQLg9HIg2L52sTSci1YOdBCsX9CArxlOAg=="/>
         </item>
     </channel>
 </rss>
