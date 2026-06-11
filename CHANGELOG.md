@@ -2,6 +2,8 @@
 
 ## 0.2.4 - Unreleased
 
+- Allow active incident details in the menu header to wrap across up to four lines.
+
 ## 0.2.3 - 2026-06-11
 
 - Remove temporary App Store Connect key material when notarization key conversion fails.

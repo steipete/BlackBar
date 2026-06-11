@@ -138,15 +138,17 @@ private struct StatusNoticeRow: View {
     var status: BlacksmithStatus
 
     var body: some View {
-        HStack(spacing: 7) {
+        HStack(alignment: .top, spacing: 7) {
             Circle()
                 .fill(StatusPalette.color(for: self.status))
                 .frame(width: 7, height: 7)
+                .padding(.top, 3)
             Text("\(self.status.noticeKind): \(self.status.noticeTitle ?? self.status.label)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .lineLimit(1)
-            Spacer()
+                .lineLimit(4)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
