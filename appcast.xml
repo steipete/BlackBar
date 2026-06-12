@@ -3,6 +3,21 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.2.4</title>
+            <pubDate>Fri, 12 Jun 2026 01:29:38 +0100</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+            <sparkle:version>9</sparkle:version>
+            <sparkle:shortVersionString>0.2.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>BlackBar 0.2.4</h2>
+<ul>
+<li>Show active status details below the Blacksmith Status action, wrapping across up to four lines.</li>
+</ul>
+<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.4/BlackBar-0.2.4.zip" length="2099564" type="application/octet-stream" sparkle:edSignature="T/ZVa06cFw/r5/xgSJZcHKzf4QU7ys79fEJa8dQi+fzg0rdxSGXlmk1d+lhdiTPu7B44zQ01VINFKbQfiIKVBA=="/>
+        </item>
+        <item>
             <title>0.2.3</title>
             <pubDate>Thu, 11 Jun 2026 08:03:13 +0100</pubDate>
             <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
@@ -32,17 +47,6 @@
 <p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.2/BlackBar-0.2.2.zip" length="2097066" type="application/octet-stream" sparkle:edSignature="OcF7Gp/9cj8De79zwRaKIrzHKW674t/Q2nN4tCrACL5FZBM9PqYUyzrTeFM9UHv1Q85LEoXhDRMm0ZrZzo4bDg=="/>
-        </item>
-        <item>
-            <title>0.2.1</title>
-            <pubDate>Thu, 21 May 2026 14:51:50 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>6</sparkle:version>
-            <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<ul><li>Add a General setting to launch BlackBar automatically at login.</li><li>Move Blacksmith account status, login actions, and account links into a dedicated Account settings tab.</li><li>Store the launch-at-login preference and apply it at startup instead of showing a false unavailable state in local builds.</li><li>Show the app version from bundle metadata in the About settings pane.</li><li>Document the Homebrew cask install command in the README.</li></ul>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.1/BlackBar-0.2.1.zip" length="2049646" type="application/octet-stream" sparkle:edSignature="y/ozInj+p5ogx1pV+VOgFNVXox7gNcpSlyeELFsyuDOPdyO8mR53hLaPybz0qW0ShXtOPF0z6FsyQFvueQ9tAw=="/>
         </item>
     </channel>
 </rss>
