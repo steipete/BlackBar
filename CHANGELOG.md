@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.4 - Unreleased
+## 0.2.4 - 2026-06-12
 
 - Show active status details below the Blacksmith Status action, wrapping across up to four lines.
 
