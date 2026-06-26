@@ -11,6 +11,46 @@ struct StatusModelTests {
         #expect(status.badgeLabel == "UP")
     }
 
+    @Test("in-progress maintenance is not operational")
+    func inProgressMaintenanceIsNotOperational() {
+        let status = BlacksmithStatus(
+            pageStatus: "UP",
+            incidents: [],
+            maintenances: [StatusEvent(id: "m1", name: "Disk replacement", status: "INPROGRESS")]
+        )
+
+        #expect(status.isOperational == false)
+        #expect(status.label == "Disk replacement")
+        #expect(status.badgeLabel == "MAINT")
+    }
+
+    @Test("planned maintenance stays operational but still shows a notice")
+    func plannedMaintenanceStaysOperational() {
+        let status = BlacksmithStatus(
+            pageStatus: "UP",
+            incidents: [],
+            maintenances: [StatusEvent(id: "m1", name: "Disk replacement", status: "NOTSTARTEDYET")]
+        )
+
+        // A scheduled window is announced in activeMaintenances before it begins;
+        // it must not flip the status dot until it is actually under way.
+        #expect(status.isOperational == true)
+        #expect(status.label == "All systems operational")
+        #expect(status.hasActiveNotice)
+        #expect(status.badgeLabel == "MAINT")
+    }
+
+    @Test("maintenance status matching ignores case and separators")
+    func maintenanceStatusMatchingNormalizes() {
+        let status = BlacksmithStatus(
+            pageStatus: "UP",
+            incidents: [],
+            maintenances: [StatusEvent(id: "m1", name: "Disk replacement", status: "in_progress")]
+        )
+
+        #expect(status.isOperational == false)
+    }
+
     @Test("incidents take badge priority")
     func incidentsTakeBadgePriority() {
         let status = BlacksmithStatus(

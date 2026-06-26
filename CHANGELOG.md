@@ -2,6 +2,8 @@
 
 ## 0.2.5 - Unreleased
 
+- Treat an in-progress maintenance window as not operational, so the status stops reading "All systems operational" while the badge shows "MAINT". Planned maintenance announced ahead of time stays operational until it actually starts.
+
 ## 0.2.4 - 2026-06-12
 
 - Show active status details below the Blacksmith Status action, wrapping across up to four lines.

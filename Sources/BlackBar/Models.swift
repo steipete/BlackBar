@@ -27,8 +27,20 @@ struct BlacksmithStatus {
     var incidents: [StatusEvent]
     var maintenances: [StatusEvent]
 
+    // A maintenance only affects operational state once it is actually under way.
+    // Planned windows (e.g. Instatus "NOTSTARTEDYET") are announced in activeMaintenances
+    // before they begin, so they stay operational while still showing the MAINT notice.
+    private static func isActiveMaintenance(_ status: String) -> Bool {
+        let normalized = status.uppercased().filter(\.isLetter)
+        return normalized == "INPROGRESS" || normalized == "VERIFYING"
+    }
+
+    var hasActiveMaintenance: Bool {
+        maintenances.contains { Self.isActiveMaintenance($0.status) }
+    }
+
     var isOperational: Bool {
-        pageStatus.uppercased() == "UP" && incidents.isEmpty
+        pageStatus.uppercased() == "UP" && incidents.isEmpty && !hasActiveMaintenance
     }
 
     var hasActiveNotice: Bool {
