@@ -130,7 +130,7 @@ BlackBar uses the same Sparkle release shape as the rest of the openclaw
 toolchain.
 
 Release wrappers in this repo delegate shared appcast/signing/release logic to
-the `mac-app-release` skill in `agent-scripts`. Keep `agent-scripts` next to
+the `release-mac-app` skill in `agent-scripts`. Keep `agent-scripts` next to
 this checkout or at `~/Projects/agent-scripts`, or set
 `MAC_RELEASE_TOOL=/path/to/mac-release`.
 
