@@ -3,6 +3,22 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.2.5</title>
+            <pubDate>Thu, 02 Jul 2026 12:05:16 +0100</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+            <sparkle:version>10</sparkle:version>
+            <sparkle:shortVersionString>0.2.5</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>BlackBar 0.2.5</h2>
+<ul>
+<li>Treat an in-progress maintenance window as not operational, so the status stops reading &quot;All systems operational&quot; while the badge shows &quot;MAINT&quot;. Planned maintenance announced ahead of time stays operational until it actually starts. Thanks @devYRPauli.</li>
+<li>Keep the website download buttons pointed at the latest GitHub release instead of a hard-coded older version.</li>
+</ul>
+<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.5/BlackBar-0.2.5.zip" length="2102829" type="application/octet-stream" sparkle:edSignature="nGrFwGj2PHpkI2GsE+qt8qIm2lORTQitI9Xf4gbfndAGpKjJZB5BjIxk9evz4/Q0QQQ6CAPO2F4WEvdBCosIAw=="/>
+        </item>
+        <item>
             <title>0.2.4</title>
             <pubDate>Fri, 12 Jun 2026 01:29:38 +0100</pubDate>
             <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
@@ -31,22 +47,6 @@
 <p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.3/BlackBar-0.2.3.zip" length="2097078" type="application/octet-stream" sparkle:edSignature="5v3/YDu/gSaYNmJrFtHJTBgMO/ot2he0Z19RZmkP8t1aMaP1kykt7MARFIk9ZQ/JLawlWz9l8h8KEbSgqDaOCA=="/>
-        </item>
-        <item>
-            <title>0.2.2</title>
-            <pubDate>Fri, 22 May 2026 14:33:47 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>7</sparkle:version>
-            <sparkle:shortVersionString>0.2.2</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>BlackBar 0.2.2</h2>
-<ul>
-<li>Add right-click PNG export from the menu graphs, including labeled vCPU and workflow-run snapshots (#2). Thanks @mvanhorn.</li>
-<li>Clarify Sparkle signing key ownership and validate release signing keys against the embedded public key.</li>
-</ul>
-<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.2/BlackBar-0.2.2.zip" length="2097066" type="application/octet-stream" sparkle:edSignature="OcF7Gp/9cj8De79zwRaKIrzHKW674t/Q2nN4tCrACL5FZBM9PqYUyzrTeFM9UHv1Q85LEoXhDRMm0ZrZzo4bDg=="/>
         </item>
     </channel>
 </rss>
