@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.5 - Unreleased
+## 0.2.5 - 2026-07-02
 
 - Treat an in-progress maintenance window as not operational, so the status stops reading "All systems operational" while the badge shows "MAINT". Planned maintenance announced ahead of time stays operational until it actually starts. Thanks @devYRPauli.
 - Keep the website download buttons pointed at the latest GitHub release instead of a hard-coded older version.
