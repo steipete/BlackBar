@@ -23,10 +23,6 @@ if [[ "$TIMESTAMP" != "0" ]]; then
   CODESIGN_ARGS+=(--timestamp)
 fi
 if [[ -n "$KEYCHAIN" ]]; then
-  [[ -n "$KEYCHAIN_PASSWORD" ]] || {
-    echo "CODESIGN_KEYCHAIN_PASSWORD is required with CODESIGN_KEYCHAIN" >&2
-    exit 1
-  }
   log "Unlocking signing keychain"
   security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
   CODESIGN_ARGS+=(--keychain "$KEYCHAIN")

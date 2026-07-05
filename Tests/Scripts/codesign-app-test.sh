@@ -24,7 +24,8 @@ chmod +x "$TEST_ROOT/bin/codesign"
 cat > "$TEST_ROOT/bin/security" <<'SCRIPT'
 #!/usr/bin/env bash
 set -euo pipefail
-printf '%s\n' "$*" >> "$SECURITY_LOG"
+printf '<%s>' "$@" >> "$SECURITY_LOG"
+printf '\n' >> "$SECURITY_LOG"
 SCRIPT
 chmod +x "$TEST_ROOT/bin/security"
 
@@ -41,7 +42,17 @@ if grep -q -- '--timestamp' "$FAKE_LOG"; then
   exit 1
 fi
 grep -q -- "--keychain $TEST_ROOT/release.keychain-db" "$FAKE_LOG"
-grep -q -- "unlock-keychain -p test password $TEST_ROOT/release.keychain-db" "$SECURITY_LOG"
+grep -Fq -- "<unlock-keychain><-p><test password><$TEST_ROOT/release.keychain-db>" "$SECURITY_LOG"
+
+: > "$SECURITY_LOG"
+env -u CODESIGN_KEYCHAIN_PASSWORD \
+  PATH="$TEST_ROOT/bin:$PATH" \
+  FAKE_LOG="$FAKE_LOG" \
+  SECURITY_LOG="$SECURITY_LOG" \
+  CODESIGN_TIMESTAMP=0 \
+  CODESIGN_KEYCHAIN="$TEST_ROOT/release.keychain-db" \
+  "$ROOT/Scripts/codesign_app.sh" "$APP_PATH" "Developer ID Test" >/dev/null
+grep -Fq -- "<unlock-keychain><-p><><$TEST_ROOT/release.keychain-db>" "$SECURITY_LOG"
 
 : > "$FAKE_LOG"
 PATH="$TEST_ROOT/bin:$PATH" FAKE_LOG="$FAKE_LOG" \
