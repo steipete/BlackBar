@@ -6,7 +6,9 @@ APP_PATH="${1:-$ROOT/.build/release/BlackBar.app}"
 IDENTITY="${2:-${BLACKBAR_CODE_SIGN_IDENTITY:-${CODESIGN_IDENTITY:-${CODE_SIGN_IDENTITY:-}}}}"
 APP_NAME="BlackBar"
 BUNDLE_ID="com.steipete.blackbar"
-TMP_ENTITLEMENTS="/tmp/BlackBar_entitlements.plist"
+TIMESTAMP="${CODESIGN_TIMESTAMP:-1}"
+KEYCHAIN="${CODESIGN_KEYCHAIN:-}"
+KEYCHAIN_PASSWORD="${CODESIGN_KEYCHAIN_PASSWORD:-}"
 
 log() { printf '%s\n' "[$(date '+%H:%M:%S')] $*"; }
 
@@ -15,6 +17,23 @@ if [[ -z "$IDENTITY" ]]; then
   exit 0
 fi
 [[ -d "$APP_PATH" ]] || { echo "App bundle not found: $APP_PATH" >&2; exit 1; }
+
+CODESIGN_ARGS=(--force --options runtime)
+if [[ "$TIMESTAMP" != "0" ]]; then
+  CODESIGN_ARGS+=(--timestamp)
+fi
+if [[ -n "$KEYCHAIN" ]]; then
+  [[ -n "$KEYCHAIN_PASSWORD" ]] || {
+    echo "CODESIGN_KEYCHAIN_PASSWORD is required with CODESIGN_KEYCHAIN" >&2
+    exit 1
+  }
+  log "Unlocking signing keychain"
+  security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+  CODESIGN_ARGS+=(--keychain "$KEYCHAIN")
+fi
+
+TMP_ENTITLEMENTS=$(mktemp "${TMPDIR:-/tmp}/BlackBar_entitlements.XXXXXX.plist")
+trap 'rm -f "$TMP_ENTITLEMENTS"' EXIT
 
 bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_PATH/Contents/Info.plist" 2>/dev/null || echo "$BUNDLE_ID")"
 cat > "$TMP_ENTITLEMENTS" <<PLIST
@@ -36,9 +55,11 @@ PLIST
 xattr -cr "$APP_PATH" 2>/dev/null || true
 
 log "Signing frameworks"
-find "$APP_PATH/Contents/Frameworks" \( -type d -name '*.framework' -o -type f -name '*.dylib' \) 2>/dev/null | while read -r framework; do
-  codesign --force --options runtime --timestamp --sign "$IDENTITY" "$framework"
-done
+if [[ -d "$APP_PATH/Contents/Frameworks" ]]; then
+  while read -r framework; do
+    codesign "${CODESIGN_ARGS[@]}" --sign "$IDENTITY" "$framework"
+  done < <(find "$APP_PATH/Contents/Frameworks" \( -type d -name '*.framework' -o -type f -name '*.dylib' \))
+fi
 
 SPARKLE_FRAMEWORK="$APP_PATH/Contents/Frameworks/Sparkle.framework"
 if [[ -d "$SPARKLE_FRAMEWORK" ]]; then
@@ -56,18 +77,17 @@ if [[ -d "$SPARKLE_FRAMEWORK" ]]; then
     "$SPARKLE_VERSION" \
     "$SPARKLE_FRAMEWORK"; do
     if [[ -e "$path" ]]; then
-      codesign --force --options runtime --timestamp --sign "$IDENTITY" "$path"
+      codesign "${CODESIGN_ARGS[@]}" --sign "$IDENTITY" "$path"
     fi
   done
 fi
 
 log "Signing app executable"
-codesign --force --options runtime --timestamp --entitlements "$TMP_ENTITLEMENTS" --sign "$IDENTITY" "$APP_PATH/Contents/MacOS/$APP_NAME"
+codesign "${CODESIGN_ARGS[@]}" --entitlements "$TMP_ENTITLEMENTS" --sign "$IDENTITY" "$APP_PATH/Contents/MacOS/$APP_NAME"
 
 log "Signing app bundle"
-codesign --force --options runtime --timestamp --entitlements "$TMP_ENTITLEMENTS" --sign "$IDENTITY" "$APP_PATH"
+codesign "${CODESIGN_ARGS[@]}" --entitlements "$TMP_ENTITLEMENTS" --sign "$IDENTITY" "$APP_PATH"
 
 log "Verifying"
 codesign --verify --verbose=2 "$APP_PATH"
-rm -f "$TMP_ENTITLEMENTS"
 log "Done codesigning $APP_PATH"

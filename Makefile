@@ -19,6 +19,7 @@ run: app
 
 test:
 	swift test
+	./Tests/Scripts/codesign-app-test.sh
 	./Tests/Scripts/sign-and-notarize-test.sh
 
 ci: test
