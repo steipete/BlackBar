@@ -2,6 +2,9 @@
 
 ## 0.2.6 - Unreleased
 
+- Avoid rebuilding the SwiftUI status menu after background polling while the menu is closed, reducing idle CPU use.
+- Reuse ISO 8601 parsing styles while processing job history instead of rebuilding formatters for every timestamp.
+
 ## 0.2.5 - 2026-07-02
 
 - Treat an in-progress maintenance window as not operational, so the status stops reading "All systems operational" while the badge shows "MAINT". Planned maintenance announced ahead of time stays operational until it actually starts. Thanks @devYRPauli.

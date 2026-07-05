@@ -13,6 +13,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private let menu = NSMenu()
     private var timer: Timer?
+    private var menuRebuildState = StatusMenuRebuildState()
 
     init(model: AppModel, statusBar: NSStatusBar = .system) {
         self.model = model
@@ -32,7 +33,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
         self.model.onSnapshotChange = { [weak self] in
             self?.applyStatusItemAppearance()
-            self?.rebuildMenu()
+            guard let self, self.menuRebuildState.shouldRebuildAfterSnapshotChange else { return }
+            self.rebuildMenu()
         }
         self.model.onPollIntervalChange = { [weak self] interval in
             self?.scheduleTimer(interval: interval)
@@ -57,6 +59,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     func menuWillOpen(_ menu: NSMenu) {
         guard menu === self.menu else { return }
+        self.menuRebuildState.rootMenuWillOpen()
         self.rebuildMenu()
         Task { await self.model.refresh() }
     }
@@ -67,6 +70,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     func menuDidClose(_ menu: NSMenu) {
         self.updateHighlights(in: menu, highlightedItem: nil)
+        if menu === self.menu {
+            self.menuRebuildState.rootMenuDidClose()
+        }
     }
 
     @objc private func refreshNow() {
@@ -328,6 +334,22 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             guard let highlighting = item.view as? MenuItemHighlighting else { continue }
             highlighting.setHighlighted(item === highlightedItem && item.isEnabled)
         }
+    }
+}
+
+struct StatusMenuRebuildState {
+    private(set) var isRootMenuOpen = false
+
+    var shouldRebuildAfterSnapshotChange: Bool {
+        self.isRootMenuOpen
+    }
+
+    mutating func rootMenuWillOpen() {
+        self.isRootMenuOpen = true
+    }
+
+    mutating func rootMenuDidClose() {
+        self.isRootMenuOpen = false
     }
 }
 

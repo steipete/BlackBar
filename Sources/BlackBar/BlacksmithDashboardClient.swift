@@ -3,6 +3,8 @@ import Foundation
 struct BlacksmithDashboardClient {
     private let baseURL = URL(string: "https://dashboardbackend.blacksmith.sh/api")!
     private let cookieHeader: String
+    private static let fractionalISO8601 = Date.ISO8601FormatStyle(includingFractionalSeconds: true)
+    private static let wholeSecondISO8601 = Date.ISO8601FormatStyle()
 
     init(cookieHeader: String) {
         self.cookieHeader = cookieHeader
@@ -148,16 +150,13 @@ struct BlacksmithDashboardClient {
     }
 
     private static func isoString(from date: Date) -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter.string(from: date)
+        date.formatted(Self.fractionalISO8601)
     }
 
     fileprivate static func date(from string: String?) -> Date? {
         guard let string else { return nil }
-        let fractionalFormatter = ISO8601DateFormatter()
-        fractionalFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return fractionalFormatter.date(from: string) ?? ISO8601DateFormatter().date(from: string)
+        return (try? Self.fractionalISO8601.parse(string))
+            ?? (try? Self.wholeSecondISO8601.parse(string))
     }
 }
 
