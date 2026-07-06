@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Card-style replacement for the raw disabled-text stat rows in the menu.
+/// Borderless stat rows styled to sit flush with native menu content.
 struct MenuStatsView: View {
     let snapshot: DashboardSnapshot
 
@@ -13,10 +13,7 @@ struct MenuStatsView: View {
             }
 
             if !self.historyChips.isEmpty {
-                Rectangle()
-                    .fill(Color.primary.opacity(0.07))
-                    .frame(height: 1)
-                HStack(spacing: 6) {
+                HStack(spacing: 10) {
                     ForEach(self.historyChips, id: \.label) { chip in
                         LegendChip(label: "\(chip.label) \(chip.count)", color: chip.color)
                     }
@@ -49,17 +46,8 @@ struct MenuStatsView: View {
                 .foregroundStyle(.orange)
             }
         }
-        .padding(10)
-        .background(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(Color.primary.opacity(0.05))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .strokeBorder(Color.primary.opacity(0.07), lineWidth: 1)
-                )
-        )
-        .padding(.horizontal, 12)
-        .padding(.vertical, 4)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 6)
         .frame(width: 360, alignment: .leading)
     }
 
