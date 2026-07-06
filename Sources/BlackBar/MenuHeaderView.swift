@@ -38,7 +38,6 @@ struct MenuHeaderView: View {
 
             if !self.snapshot.usage.workflowDistribution.isEmpty {
                 Divider()
-                    .overlay(Color.primary.opacity(0.08))
                 WorkflowRunDistributionChart(
                     buckets: self.snapshot.usage.workflowDistribution,
                     onRightClick: { saveToDownloads in
@@ -206,10 +205,6 @@ struct LegendChip: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
         }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
-        .background(Capsule().fill(Color.primary.opacity(0.05)))
-        .overlay(Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
     }
 }
 
@@ -401,7 +396,7 @@ private struct WorkflowRunDistributionChart: View {
                 .minimumScaleFactor(0.8)
                 .frame(height: 14, alignment: .leading)
 
-            HStack(spacing: 5) {
+            HStack(spacing: 10) {
                 ForEach(Self.presentStatuses(in: model.buckets), id: \.self) { status in
                     LegendChip(label: status, color: Self.color(for: status))
                 }
@@ -629,7 +624,7 @@ private struct PlatformLegendView: View {
     var platformUsage: [String: CoreUsage]
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 10) {
             PlatformLegendItem(label: "amd64", usage: platformUsage["amd64"], color: .indigo)
             PlatformLegendItem(label: "arm64", usage: platformUsage["arm64"], color: .cyan)
             PlatformLegendItem(label: "mac", usage: platformUsage["macos"], color: .pink)
