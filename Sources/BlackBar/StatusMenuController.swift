@@ -127,15 +127,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         self.menu.addItem(self.headerItem())
         self.menu.addItem(.separator())
 
-        self.menu.addItem(self.disabledItem("Active: \(self.model.snapshot.usage.activeJobs) jobs, \(self.model.snapshot.usage.activeVCPU) vCPU"))
-        self.menu.addItem(self.disabledItem("Queued: \(self.model.snapshot.usage.queuedJobs) jobs"))
-        self.menu.addItem(self.wrappingDisabledItem("API: \(self.model.snapshot.usage.debugSummary)"))
-        if let refreshedAt = self.model.snapshot.refreshedAt {
-            self.menu.addItem(self.disabledItem("Updated: \(refreshedAt.formatted(date: .omitted, time: .standard))"))
-        }
-        if let error = self.model.snapshot.error {
-            self.menu.addItem(self.wrappingDisabledItem("Error: \(error)"))
-        }
+        self.menu.addItem(self.statsItem())
 
         self.menu.addItem(.separator())
         self.menu.addItem(self.activeJobsItem())
@@ -162,6 +154,15 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         let view = MenuItemHostingView(rootView: AnyView(MenuHeaderView(snapshot: self.model.snapshot, history: self.model.history)))
         item.view = view
         item.isEnabled = false
+        return item
+    }
+
+    private func statsItem() -> NSMenuItem {
+        let item = NSMenuItem()
+        let view = MenuItemHostingView(rootView: AnyView(MenuStatsView(snapshot: self.model.snapshot)))
+        item.view = view
+        item.isEnabled = false
+        item.toolTip = "API: \(self.model.snapshot.usage.debugSummary)"
         return item
     }
 
@@ -223,13 +224,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     private func disabledItem(_ title: String) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-        item.isEnabled = false
-        return item
-    }
-
-    private func wrappingDisabledItem(_ title: String) -> NSMenuItem {
-        let item = NSMenuItem()
-        item.view = MenuTextItemView(title: title, width: Metrics.menuWidth)
         item.isEnabled = false
         return item
     }
@@ -350,57 +344,5 @@ struct StatusMenuRebuildState {
 
     mutating func rootMenuDidClose() {
         self.isRootMenuOpen = false
-    }
-}
-
-@MainActor
-private final class MenuTextItemView: NSView, MenuItemMeasuring {
-    private enum Metrics {
-        static let horizontalInset: CGFloat = 14
-        static let verticalInset: CGFloat = 4
-    }
-
-    private let textField = NSTextField(labelWithString: "")
-
-    override var allowsVibrancy: Bool {
-        true
-    }
-
-    init(title: String, width: CGFloat) {
-        super.init(frame: NSRect(x: 0, y: 0, width: width, height: 24))
-        self.textField.stringValue = title
-        self.textField.font = .menuFont(ofSize: 0)
-        self.textField.textColor = .disabledControlTextColor
-        self.textField.lineBreakMode = .byWordWrapping
-        self.textField.maximumNumberOfLines = 0
-        self.textField.cell?.wraps = true
-        self.addSubview(self.textField)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layout() {
-        super.layout()
-        self.textField.frame = self.labelFrame(width: self.bounds.width, height: self.bounds.height)
-    }
-
-    func measuredHeight(width: CGFloat) -> CGFloat {
-        let labelWidth = width - Metrics.horizontalInset * 2
-        let boundingSize = NSSize(width: labelWidth, height: .greatestFiniteMagnitude)
-        let measured = self.textField.cell?.cellSize(forBounds: NSRect(origin: .zero, size: boundingSize)).height
-            ?? self.textField.intrinsicContentSize.height
-        return ceil(measured + Metrics.verticalInset * 2)
-    }
-
-    private func labelFrame(width: CGFloat, height: CGFloat) -> NSRect {
-        NSRect(
-            x: Metrics.horizontalInset,
-            y: Metrics.verticalInset,
-            width: width - Metrics.horizontalInset * 2,
-            height: height - Metrics.verticalInset * 2
-        )
     }
 }

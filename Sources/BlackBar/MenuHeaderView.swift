@@ -8,12 +8,17 @@ struct MenuHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .bottom, spacing: 12) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("vCPU")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    Text(Self.vcpuText(self.snapshot.usage.activeVCPU))
-                        .font(.system(size: 30, weight: .semibold, design: .monospaced))
+                VStack(alignment: .leading, spacing: 2) {
+                    SectionCaption("Active vCPU")
+                    Text(self.snapshot.usage.activeVCPU, format: .number)
+                        .font(.system(size: 32, weight: .bold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.primary.opacity(0.95), .primary.opacity(0.6)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
                 }
                 .fixedSize(horizontal: true, vertical: false)
                 Spacer()
@@ -33,7 +38,7 @@ struct MenuHeaderView: View {
 
             if !self.snapshot.usage.workflowDistribution.isEmpty {
                 Divider()
-                    .overlay(Color.secondary.opacity(0.18))
+                    .overlay(Color.primary.opacity(0.08))
                 WorkflowRunDistributionChart(
                     buckets: self.snapshot.usage.workflowDistribution,
                     onRightClick: { saveToDownloads in
@@ -64,10 +69,6 @@ struct MenuHeaderView: View {
 
     private var chartRangeLabel: String {
         snapshot.usage.historySamples.isEmpty ? "recent vCPU" : "24h vCPU"
-    }
-
-    private static func vcpuText(_ value: Int) -> String {
-        String(value)
     }
 
     @MainActor
@@ -176,6 +177,63 @@ private struct RightClickExportOverlay: View {
     }
 }
 
+struct SectionCaption: View {
+    var text: String
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(self.text.uppercased())
+            .font(.system(size: 9, weight: .semibold))
+            .tracking(0.8)
+            .foregroundStyle(.secondary)
+    }
+}
+
+struct LegendChip: View {
+    var label: String
+    var color: Color
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Circle()
+                .fill(self.color)
+                .frame(width: 5, height: 5)
+            Text(self.label)
+                .font(.caption2.monospacedDigit())
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(Capsule().fill(Color.primary.opacity(0.05)))
+        .overlay(Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
+    }
+}
+
+private struct SummaryMetricsView: View {
+    var caption: String
+    var metrics: [(label: String, value: String)]
+
+    var body: some View {
+        VStack(alignment: .trailing, spacing: 3) {
+            SectionCaption(self.caption)
+            ForEach(self.metrics, id: \.label) { metric in
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text(metric.label)
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                    Text(metric.value)
+                        .font(.caption.monospacedDigit().weight(.semibold))
+                        .foregroundStyle(.primary.opacity(0.85))
+                }
+            }
+        }
+    }
+}
+
 enum StatusPalette {
     static func color(for status: BlacksmithStatus) -> Color {
         if !status.incidents.isEmpty { return .red }
@@ -198,16 +256,10 @@ private struct WorkflowDistributionSummaryView: View {
     var buckets: [WorkflowRunDistributionBucket]
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 2) {
-            Text("24h runs")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Text("peak \(peak)")
-                .font(.caption.monospacedDigit().weight(.semibold))
-            Text("avg \(Self.durationText(avgDuration))")
-                .font(.caption2.monospacedDigit())
-                .foregroundStyle(.secondary)
-        }
+        SummaryMetricsView(caption: "24h runs", metrics: [
+            (label: "peak", value: peak.formatted(.number)),
+            (label: "avg", value: Self.durationText(avgDuration)),
+        ])
     }
 
     private var peak: Int {
@@ -267,9 +319,7 @@ private struct WorkflowRunDistributionChart: View {
         let model = Self.makeModel(buckets: self.buckets)
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .bottom, spacing: 8) {
-                Text("Workflow runs")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                SectionCaption("Workflow runs")
                 Spacer()
                 WorkflowDistributionSummaryView(buckets: model.buckets)
             }
@@ -281,7 +331,7 @@ private struct WorkflowRunDistributionChart: View {
                         y: .value("Runs", point.count)
                     )
                     .foregroundStyle(by: .value("Status", point.status))
-                    .cornerRadius(1.5)
+                    .cornerRadius(2.5)
                 }
                 ForEach(model.buckets) { bucket in
                     if let duration = bucket.avgDurationSeconds {
@@ -348,19 +398,33 @@ private struct WorkflowRunDistributionChart: View {
                 .font(.caption2.monospacedDigit())
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .frame(height: 14, alignment: .leading)
 
-            HStack(spacing: 8) {
-                ForEach(Self.statuses, id: \.self) { status in
-                    DistributionLegendItem(label: status, color: Self.color(for: status))
+            HStack(spacing: 5) {
+                ForEach(Self.presentStatuses(in: model.buckets), id: \.self) { status in
+                    LegendChip(label: status, color: Self.color(for: status))
                 }
-                DistributionLegendItem(label: "duration", color: Self.durationColor)
+                LegendChip(label: "avg", color: Self.durationColor)
                 Spacer(minLength: 0)
             }
         }
     }
 
     private static let statuses = ["success", "cancelled", "failure", "running", "queued"]
+
+    /// Legend only lists statuses that occur in the window, so the chips fit the menu width.
+    private static func presentStatuses(in buckets: [WorkflowRunDistributionBucket]) -> [String] {
+        var counts: [String: Int] = [:]
+        for bucket in buckets {
+            counts["success", default: 0] += bucket.successCount
+            counts["cancelled", default: 0] += bucket.cancelledCount
+            counts["failure", default: 0] += bucket.failureCount
+            counts["running", default: 0] += bucket.inProgressCount
+            counts["queued", default: 0] += bucket.queuedCount
+        }
+        return self.statuses.filter { counts[$0, default: 0] > 0 }
+    }
     private static let durationColor = Color.primary.opacity(0.82)
     private static let selectionBandColor = Color(nsColor: .labelColor).opacity(0.1)
 
@@ -436,38 +500,16 @@ private struct WorkflowRunDistributionChart: View {
     }
 }
 
-private struct DistributionLegendItem: View {
-    var label: String
-    var color: Color
-
-    var body: some View {
-        HStack(spacing: 4) {
-            Circle()
-                .fill(color)
-                .frame(width: 6, height: 6)
-            Text(label)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-        }
-    }
-}
 
 private struct UsageSummaryView: View {
     var samples: [CoreUsageHistorySample]
     var rangeLabel: String
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 2) {
-            Text(rangeLabel)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Text("peak \(peak)")
-                .font(.caption.monospacedDigit().weight(.semibold))
-            Text("avg \(average)")
-                .font(.caption2.monospacedDigit())
-                .foregroundStyle(.secondary)
-        }
+        SummaryMetricsView(caption: rangeLabel, metrics: [
+            (label: "peak", value: peak.formatted(.number)),
+            (label: "avg", value: average.formatted(.number)),
+        ])
     }
 
     private var totals: [Int] {
@@ -493,31 +535,21 @@ private struct UsageTrendChart: View {
         Canvas { context, size in
             let samples = self.samples.isEmpty ? [CoreUsageHistorySample(amd64: .init(vcpus: 0, jobs: 0), arm64: .init(vcpus: 0, jobs: 0), macos: .init(vcpus: 0, jobs: 0))] : self.samples
             let maxTotal = max(samples.map(\.total.vcpus).max() ?? 0, 1)
-            let count = samples.count
-            let gap: CGFloat = count > 64 ? 1 : 2
-            let barWidth = max(1, (size.width - CGFloat(max(count - 1, 0)) * gap) / CGFloat(max(count, 1)))
 
             self.drawGrid(in: &context, size: size)
 
-            for (index, sample) in samples.enumerated() {
-                let x = CGFloat(index) * (barWidth + gap)
-                var bottom = size.height
-                self.drawSegment(value: sample.amd64.vcpus, maxTotal: maxTotal, x: x, width: barWidth, bottom: &bottom, size: size, color: .indigo, context: &context)
-                self.drawSegment(value: sample.arm64.vcpus, maxTotal: maxTotal, x: x, width: barWidth, bottom: &bottom, size: size, color: .cyan, context: &context)
-                self.drawSegment(value: sample.macos.vcpus, maxTotal: maxTotal, x: x, width: barWidth, bottom: &bottom, size: size, color: .pink, context: &context)
-            }
+            // Stacked layers bottom-up; each boundary is the cumulative total so far.
+            let lower = [CGFloat](repeating: size.height, count: samples.count)
+            let amd = self.boundary(samples.map(\.amd64.vcpus), stackedOn: samples.map { _ in 0 }, maxTotal: maxTotal, size: size)
+            let arm = self.boundary(samples.map(\.arm64.vcpus), stackedOn: samples.map(\.amd64.vcpus), maxTotal: maxTotal, size: size)
+            let mac = self.boundary(samples.map(\.total.vcpus), stackedOn: samples.map { _ in 0 }, maxTotal: maxTotal, size: size)
 
-            var line = Path()
-            for (index, sample) in samples.enumerated() {
-                let x = CGFloat(index) * (barWidth + gap) + barWidth / 2
-                let y = size.height - (size.height * CGFloat(sample.total.vcpus) / CGFloat(maxTotal))
-                if index == 0 {
-                    line.move(to: CGPoint(x: x, y: y))
-                } else {
-                    line.addLine(to: CGPoint(x: x, y: y))
-                }
-            }
-            context.stroke(line, with: .color(.primary.opacity(0.78)), lineWidth: 1.4)
+            self.fillLayer(upper: amd, lower: lower, color: .indigo, size: size, context: &context)
+            self.fillLayer(upper: arm, lower: amd, color: .cyan, size: size, context: &context)
+            self.fillLayer(upper: mac, lower: arm, color: .pink, size: size, context: &context)
+
+            let line = self.polyline(mac, size: size)
+            context.stroke(line, with: .color(.primary.opacity(0.6)), style: StrokeStyle(lineWidth: 1.3, lineCap: .round, lineJoin: .round))
         }
         .accessibilityLabel("\(rangeLabel) usage")
     }
@@ -528,26 +560,68 @@ private struct UsageTrendChart: View {
             let y = size.height * fraction
             path.move(to: CGPoint(x: 0, y: y))
             path.addLine(to: CGPoint(x: size.width, y: y))
-            context.stroke(path, with: .color(.secondary.opacity(0.18)), lineWidth: 1)
+            context.stroke(path, with: .color(.secondary.opacity(0.1)), lineWidth: 1)
+        }
+        var baseline = Path()
+        baseline.move(to: CGPoint(x: 0, y: size.height - 0.5))
+        baseline.addLine(to: CGPoint(x: size.width, y: size.height - 0.5))
+        context.stroke(baseline, with: .color(.secondary.opacity(0.22)), lineWidth: 1)
+    }
+
+    /// Y positions of the stacked boundary `base + value` per sample.
+    private func boundary(_ values: [Int], stackedOn base: [Int], maxTotal: Int, size: CGSize) -> [CGFloat] {
+        zip(values, base).map { value, base in
+            size.height - size.height * CGFloat(value + base) / CGFloat(maxTotal)
         }
     }
 
-    private func drawSegment(
-        value: Int,
-        maxTotal: Int,
-        x: CGFloat,
-        width: CGFloat,
-        bottom: inout CGFloat,
-        size: CGSize,
+    private func xPosition(_ index: Int, count: Int, width: CGFloat) -> CGFloat {
+        count > 1 ? CGFloat(index) / CGFloat(count - 1) * width : width / 2
+    }
+
+    private func polyline(_ ys: [CGFloat], size: CGSize) -> Path {
+        var path = Path()
+        guard let first = ys.first else { return path }
+        guard ys.count > 1 else {
+            path.move(to: CGPoint(x: 0, y: first))
+            path.addLine(to: CGPoint(x: size.width, y: first))
+            return path
+        }
+        path.move(to: CGPoint(x: 0, y: first))
+        for (index, y) in ys.enumerated().dropFirst() {
+            path.addLine(to: CGPoint(x: self.xPosition(index, count: ys.count, width: size.width), y: y))
+        }
+        return path
+    }
+
+    private func fillLayer(
+        upper: [CGFloat],
+        lower: [CGFloat],
         color: Color,
+        size: CGSize,
         context: inout GraphicsContext)
     {
-        guard value > 0 else { return }
-        let height = size.height * CGFloat(value) / CGFloat(maxTotal)
-        guard height >= 0.5 else { return }
-        bottom -= height
-        let rect = CGRect(x: x, y: bottom, width: width, height: height)
-        context.fill(Path(roundedRect: rect, cornerRadius: min(2, width / 2)), with: .color(color.opacity(0.86)))
+        guard zip(upper, lower).contains(where: { $0 < $1 - 0.25 }) else { return }
+        var path = Path()
+        let count = upper.count
+        if count == 1 {
+            path.addRect(CGRect(x: 0, y: upper[0], width: size.width, height: max(0, lower[0] - upper[0])))
+        } else {
+            path.move(to: CGPoint(x: 0, y: upper[0]))
+            for index in 1..<count {
+                path.addLine(to: CGPoint(x: self.xPosition(index, count: count, width: size.width), y: upper[index]))
+            }
+            for index in stride(from: count - 1, through: 0, by: -1) {
+                path.addLine(to: CGPoint(x: self.xPosition(index, count: count, width: size.width), y: lower[index]))
+            }
+            path.closeSubpath()
+        }
+        let shading = GraphicsContext.Shading.linearGradient(
+            Gradient(colors: [color.opacity(0.85), color.opacity(0.3)]),
+            startPoint: .zero,
+            endPoint: CGPoint(x: 0, y: size.height)
+        )
+        context.fill(path, with: shading)
     }
 }
 
@@ -555,7 +629,7 @@ private struct PlatformLegendView: View {
     var platformUsage: [String: CoreUsage]
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             PlatformLegendItem(label: "amd64", usage: platformUsage["amd64"], color: .indigo)
             PlatformLegendItem(label: "arm64", usage: platformUsage["arm64"], color: .cyan)
             PlatformLegendItem(label: "mac", usage: platformUsage["macos"], color: .pink)
@@ -570,14 +644,7 @@ private struct PlatformLegendItem: View {
     var color: Color
 
     var body: some View {
-        HStack(spacing: 4) {
-            Circle()
-                .fill(color)
-                .frame(width: 6, height: 6)
-            Text("\(label) \(usage?.vcpus ?? 0)v/\(usage?.jobs ?? 0)j")
-                .font(.caption2.monospacedDigit())
-                .foregroundStyle(.secondary)
-        }
+        LegendChip(label: "\(label) \(usage?.vcpus ?? 0)v/\(usage?.jobs ?? 0)j", color: color)
     }
 }
 

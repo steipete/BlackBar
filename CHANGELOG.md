@@ -2,6 +2,7 @@
 
 ## 0.2.6 - Unreleased
 
+- Menu facelift: the vCPU history renders as layered gradient areas instead of dense bars, legends become chip pills that only list statuses present in the window, and the raw Active/Queued/API/Updated text rows are replaced by a stats card with per-status history chips. The full API debug summary moves into the card's tooltip.
 - Avoid rebuilding the SwiftUI status menu after background polling while the menu is closed, reducing idle CPU use.
 - Reuse ISO 8601 parsing styles while processing job history instead of rebuilding formatters for every timestamp.
 
