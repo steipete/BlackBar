@@ -3,6 +3,21 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.3.1</title>
+            <pubDate>Mon, 06 Jul 2026 12:45:05 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+            <sparkle:version>12</sparkle:version>
+            <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>BlackBar 0.3.1</h2>
+<ul>
+<li>Flatten the menu styling to look native: the stats card loses its rounded border and background, legend chips drop their capsule pills in favor of plain dot + text, and the workflow section divider uses the standard system separator.</li>
+</ul>
+<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.1/BlackBar-0.3.1.zip" length="2150184" type="application/octet-stream" sparkle:edSignature="J1LC09joBuN8zlrhrZHD2bqzgkc28o9NxhJowgfVof20hGtYyL+fk5Nv4aVygPoAMDm3mIMUh77Eblw1u4JZDA=="/>
+        </item>
+        <item>
             <title>0.3.0</title>
             <pubDate>Mon, 06 Jul 2026 07:35:20 -0700</pubDate>
             <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
@@ -34,21 +49,6 @@
 <p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.5/BlackBar-0.2.5.zip" length="2102829" type="application/octet-stream" sparkle:edSignature="nGrFwGj2PHpkI2GsE+qt8qIm2lORTQitI9Xf4gbfndAGpKjJZB5BjIxk9evz4/Q0QQQ6CAPO2F4WEvdBCosIAw=="/>
-        </item>
-        <item>
-            <title>0.2.4</title>
-            <pubDate>Fri, 12 Jun 2026 01:29:38 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>9</sparkle:version>
-            <sparkle:shortVersionString>0.2.4</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>BlackBar 0.2.4</h2>
-<ul>
-<li>Show active status details below the Blacksmith Status action, wrapping across up to four lines.</li>
-</ul>
-<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.4/BlackBar-0.2.4.zip" length="2099564" type="application/octet-stream" sparkle:edSignature="T/ZVa06cFw/r5/xgSJZcHKzf4QU7ys79fEJa8dQi+fzg0rdxSGXlmk1d+lhdiTPu7B44zQ01VINFKbQfiIKVBA=="/>
         </item>
     </channel>
 </rss>
