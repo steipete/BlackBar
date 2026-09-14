@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.3.2 - Unreleased
+## 0.3.2 - 2026-09-13
+
+**Highlights:** Sparkle 2.9.6 brings installer security fixes and more reliable update-window focus.
 
 - Update Sparkle to 2.9.6 for installer security fixes and reliable update-window focus in the menu bar app.
 
