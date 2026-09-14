@@ -3,6 +3,23 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.3.2</title>
+            <pubDate>Sun, 13 Sep 2026 23:24:57 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+            <sparkle:version>13</sparkle:version>
+            <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>BlackBar 0.3.2</h2>
+<p><strong>Highlights:</strong> Sparkle 2.9.6 brings installer security fixes and more reliable update-window focus.</p>
+<ul>
+<li>Update Sparkle to 2.9.6 for installer security fixes and reliable update-window focus in the menu bar app.</li>
+<li>Keep app packaging compatible with Swift 6.4 build output paths.</li>
+</ul>
+<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.2/BlackBar-0.3.2.zip" length="2166666" type="application/octet-stream" sparkle:edSignature="OHrrH5NUVxeaMfkRXH8Qz9pYP7XVPT/zNCNlJiLd8dGiutxQDRllyy1TdDn525PAbhEMpH/WDx3v0qLVQTF2Bg=="/>
+        </item>
+        <item>
             <title>0.3.1</title>
             <pubDate>Mon, 06 Jul 2026 12:45:05 -0700</pubDate>
             <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
@@ -33,22 +50,6 @@
 <p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.0/BlackBar-0.3.0.zip" length="2164318" type="application/octet-stream" sparkle:edSignature="Oy8JQBNroVLp+AAJQzZsSPwdTDU9YzNMkK0PJRG2dsYEriP7yB6isp2vYGGXQEbo9uEdY9/y2ZxQMJzUEwm+BQ=="/>
-        </item>
-        <item>
-            <title>0.2.5</title>
-            <pubDate>Thu, 02 Jul 2026 12:05:16 +0100</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>10</sparkle:version>
-            <sparkle:shortVersionString>0.2.5</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>BlackBar 0.2.5</h2>
-<ul>
-<li>Treat an in-progress maintenance window as not operational, so the status stops reading &quot;All systems operational&quot; while the badge shows &quot;MAINT&quot;. Planned maintenance announced ahead of time stays operational until it actually starts. Thanks @devYRPauli.</li>
-<li>Keep the website download buttons pointed at the latest GitHub release instead of a hard-coded older version.</li>
-</ul>
-<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.2.5/BlackBar-0.2.5.zip" length="2102829" type="application/octet-stream" sparkle:edSignature="nGrFwGj2PHpkI2GsE+qt8qIm2lORTQitI9Xf4gbfndAGpKjJZB5BjIxk9evz4/Q0QQQ6CAPO2F4WEvdBCosIAw=="/>
         </item>
     </channel>
 </rss>
