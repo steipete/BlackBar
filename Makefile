@@ -10,6 +10,7 @@ app: build
 	rm -rf "build/$(APP_NAME).app"
 	mkdir -p build
 	APP_DIR=".build/apple/Products/Release/$(APP_NAME).app"; \
+	if [ ! -d "$$APP_DIR" ]; then APP_DIR=".build/release/$(APP_NAME).app"; fi; \
 	if [ ! -d "$$APP_DIR" ]; then APP_DIR="$$(find .build -path "*/release/$(APP_NAME).app" -type d | head -n 1)"; fi; \
 	test -n "$$APP_DIR"; \
 	ditto "$$APP_DIR" "build/$(APP_NAME).app"
