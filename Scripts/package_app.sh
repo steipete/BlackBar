@@ -43,13 +43,9 @@ if [[ -f "$ROOT/Resources/Icon.icns" ]]; then
 fi
 
 SPARKLE_FRAMEWORK="$BUILD_DIR/Sparkle.framework"
-if [[ -d "$SPARKLE_FRAMEWORK" ]]; then
-  log "==> Installing Sparkle.framework"
-  /usr/bin/ditto "$SPARKLE_FRAMEWORK" "$APP_BUNDLE/Contents/Frameworks/Sparkle.framework"
-  ln -sf "../Frameworks/Sparkle.framework" "$APP_BUNDLE/Contents/MacOS/Sparkle.framework" || true
-  mkdir -p "$APP_BUNDLE/Contents/lib"
-  ln -sf "../Frameworks/Sparkle.framework" "$APP_BUNDLE/Contents/lib/Sparkle.framework" || true
-fi
+[[ -d "$SPARKLE_FRAMEWORK" ]] || fail "Missing Sparkle.framework: $SPARKLE_FRAMEWORK"
+log "==> Installing Sparkle.framework"
+/usr/bin/ditto "$SPARKLE_FRAMEWORK" "$APP_BUNDLE/Contents/Frameworks/Sparkle.framework"
 
 cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -93,6 +89,10 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
 </dict>
 </plist>
 PLIST
+
+VERIFY_ARGS=("$APP_BUNDLE")
+if [[ "$CONFIGURATION" == "release" ]]; then VERIFY_ARGS+=(--universal); fi
+"$ROOT/Scripts/verify_app_bundle.sh" "${VERIFY_ARGS[@]}"
 
 if [[ -n "${CODESIGN_IDENTITY:-${CODE_SIGN_IDENTITY:-}}" ]]; then
   IDENTITY="${CODESIGN_IDENTITY:-${CODE_SIGN_IDENTITY:-}}"

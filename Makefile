@@ -22,6 +22,7 @@ test:
 	swift test
 	./Tests/Scripts/codesign-app-test.sh
 	./Tests/Scripts/sign-and-notarize-test.sh
+	./Tests/Scripts/package-app-test.sh
 
 ci: test
 	swift package resolve

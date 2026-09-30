@@ -2,6 +2,9 @@
 
 ## 0.3.3 - Unreleased
 
+- Fix the launch crash caused by a missing Sparkle runtime search path, and verify embedded frameworks in both architectures before packaging (#13). Thanks @yashiels.
+- Update Sparkle to 2.10.0 for updater fixes, including macOS 27 delta-update compression handling.
+
 ## 0.3.2 - 2026-09-13
 
 **Highlights:** Sparkle 2.9.6 brings installer security fixes and more reliable update-window focus.
