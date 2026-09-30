@@ -3,6 +3,23 @@
     <channel>
         <title>BlackBar</title>
         <item>
+            <title>0.3.3</title>
+            <pubDate>Wed, 30 Sep 2026 16:25:45 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+            <sparkle:version>14</sparkle:version>
+            <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>BlackBar 0.3.3</h2>
+<p><strong>Highlights:</strong> Fixes the 0.3.2 launch crash and updates Sparkle to 2.10.0.</p>
+<ul>
+<li>Fix the launch crash caused by a missing Sparkle runtime search path, and verify embedded frameworks in both architectures before packaging (#13). Thanks @yashiels.</li>
+<li>Update Sparkle to 2.10.0 for updater fixes, including macOS 27 delta-update compression handling.</li>
+</ul>
+<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.3/BlackBar-0.3.3.zip" length="2135174" type="application/octet-stream" sparkle:edSignature="Tk+OKsNdSJ3jcyNELDOtuRoj4JLJXaFt4R43YIn9v1gYeAX+US5Zk9hATRmTDNtxk7/14qtDtUWMOtMWRpa9Dg=="/>
+        </item>
+        <item>
             <title>0.3.2</title>
             <pubDate>Sun, 13 Sep 2026 23:24:57 -0700</pubDate>
             <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
@@ -33,23 +50,6 @@
 <p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.1/BlackBar-0.3.1.zip" length="2150184" type="application/octet-stream" sparkle:edSignature="J1LC09joBuN8zlrhrZHD2bqzgkc28o9NxhJowgfVof20hGtYyL+fk5Nv4aVygPoAMDm3mIMUh77Eblw1u4JZDA=="/>
-        </item>
-        <item>
-            <title>0.3.0</title>
-            <pubDate>Mon, 06 Jul 2026 07:35:20 -0700</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>11</sparkle:version>
-            <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>BlackBar 0.3.0</h2>
-<ul>
-<li>Menu facelift: the vCPU history renders as layered gradient areas instead of dense bars, legends become chip pills that only list statuses present in the window, and the raw Active/Queued/API/Updated text rows are replaced by a stats card with per-status history chips. The full API debug summary moves into the card&#x27;s tooltip.</li>
-<li>Avoid rebuilding the SwiftUI status menu after background polling while the menu is closed, reducing idle CPU use.</li>
-<li>Reuse ISO 8601 parsing styles while processing job history instead of rebuilding formatters for every timestamp.</li>
-</ul>
-<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.0/BlackBar-0.3.0.zip" length="2164318" type="application/octet-stream" sparkle:edSignature="Oy8JQBNroVLp+AAJQzZsSPwdTDU9YzNMkK0PJRG2dsYEriP7yB6isp2vYGGXQEbo9uEdY9/y2ZxQMJzUEwm+BQ=="/>
         </item>
     </channel>
 </rss>
