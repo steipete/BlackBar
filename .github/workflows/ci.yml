@@ -37,6 +37,13 @@ jobs:
       - name: Package app bundle
         run: make app
 
+      - name: Verify archived app dependencies
+        run: |
+          source version.env
+          mkdir -p "$RUNNER_TEMP/blackbar-archive"
+          ditto -x -k "BlackBar-$MARKETING_VERSION.zip" "$RUNNER_TEMP/blackbar-archive"
+          Scripts/verify_app_bundle.sh "$RUNNER_TEMP/blackbar-archive/BlackBar.app" --universal
+
       - name: Validate bundle metadata
         run: |
           test -x build/BlackBar.app/Contents/MacOS/BlackBar

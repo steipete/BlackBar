@@ -16,6 +16,7 @@ Keep `agent-scripts` next to this checkout or at `~/Projects/agent-scripts`, or 
 Pipeline scripts under `Scripts/`:
 
 - `package_app.sh` builds the app, embeds Sparkle, and writes release metadata.
+- `verify_app_bundle.sh APP_BUNDLE --universal` checks both CPU architectures for the bundle-relative Sparkle search path and the matching embedded framework. Packaging runs it before signing; CI also checks the extracted ZIP.
 - `codesign_app.sh` signs the bundle, Sparkle framework, updater, and XPC services.
 - `sign-and-notarize.sh` builds, signs, notarizes, staples, and archives the app.
 - `release.sh` creates the tag and GitHub release, uploads app and dSYM archives, updates `appcast.xml`, and verifies the published artifacts.
@@ -48,6 +49,8 @@ Scripts/sparkle_key_status.sh
 `SPARKLE_PRIVATE_KEY_FILE=/path/to/sparkle-ed25519.key` is an explicit file override. Release scripts reject either Keychain or file keys when the derived public key does not match `SUPublicEDKey` in `Resources/Info.plist`.
 
 ## Cut a release
+
+`make ci` must pass before signing. It includes packaging regression tests and rejects missing frameworks or runtime search paths. The executable links Sparkle through `@executable_path/../Frameworks`; do not rely on Swift toolchain paths or build-directory symlinks to resolve it.
 
 Replace the `Unreleased` date in `CHANGELOG.md` with the release date, then run:
 

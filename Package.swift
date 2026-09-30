@@ -11,7 +11,7 @@ let package = Package(
         .executable(name: "BlackBar", targets: ["BlackBar"])
     ],
     dependencies: [
-        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.6")
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.10.0")
     ],
     targets: [
         .executableTarget(
@@ -20,6 +20,7 @@ let package = Package(
                 .product(name: "Sparkle", package: "Sparkle")
             ],
             linkerSettings: [
+                .unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"]),
                 .linkedFramework("AppKit"),
                 .linkedFramework("Charts"),
                 .linkedFramework("Security"),
