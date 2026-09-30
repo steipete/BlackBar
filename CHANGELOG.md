@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.3.3 - 2026-09-30
 
 **Highlights:** Fixes the 0.3.2 launch crash and updates Sparkle to 2.10.0.
