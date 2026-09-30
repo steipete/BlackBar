@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.3.3 - Unreleased
+## 0.3.3 - 2026-09-30
+
+**Highlights:** Fixes the 0.3.2 launch crash and updates Sparkle to 2.10.0.
 
 - Fix the launch crash caused by a missing Sparkle runtime search path, and verify embedded frameworks in both architectures before packaging (#13). Thanks @yashiels.
 - Update Sparkle to 2.10.0 for updater fixes, including macOS 27 delta-update compression handling.
