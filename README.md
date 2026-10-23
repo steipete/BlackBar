@@ -46,6 +46,7 @@ The Blacksmith session cookie is stored in macOS Keychain and cached in memory w
 - Current and historical vCPU use, job counts, and queued work.
 - Active job details and `amd64`, `arm64`, and `macos` usage.
 - Optional notifications for status changes, incidents, and completed jobs.
+- Job completion notifications require an observed finished status; missing jobs and failed refreshes keep the last known state.
 - PNG export for the usage and workflow graphs from their context menus.
 
 Use **Settings…** to select a GitHub organization, filter to one repository, change the refresh interval, enable notifications, or launch BlackBar at login. Fresh settings use the `openclaw` organization, include every visible repository, refresh every 60 seconds, and leave notifications off.

@@ -142,7 +142,8 @@ final class AppModel: ObservableObject {
     }
 
     func openBlacksmith() {
-        NSWorkspace.shared.open(URL(string: "https://app.blacksmith.sh/\(owner)/runs/workflows")!)
+        guard let url = DashboardURL.blacksmithWorkflows(owner: owner) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     func openBlacksmithStatus() {
@@ -150,11 +151,8 @@ final class AppModel: ObservableObject {
     }
 
     func openGitHubActions() {
-        let trimmed = repoFilter.trimmingCharacters(in: .whitespacesAndNewlines)
-        let urlString = trimmed.isEmpty ? "https://github.com/orgs/\(owner)/actions" : "https://github.com/\(owner)/\(trimmed)/actions"
-        if let url = URL(string: urlString) {
-            NSWorkspace.shared.open(url)
-        }
+        guard let url = DashboardURL.gitHubActions(owner: owner, repository: repoFilter) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     private func currentCookieHeader() throws -> String {

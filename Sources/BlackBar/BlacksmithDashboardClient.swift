@@ -38,7 +38,7 @@ struct BlacksmithDashboardClient {
             URLQueryItem(name: "limit", value: "200")
         ]
         guard let url = components.url else { throw URLError(.badURL) }
-        let jobs = (try? JSONDecoder().decode([BlacksmithJobRun].self, from: try await request(url: url))) ?? []
+        let jobs = try Self.decodeJobRuns(from: try await request(url: url))
         let relevantJobs = jobs.filter { job in
             guard !repoNeedle.isEmpty else { return true }
             let repo = job.repositoryName.lowercased()
@@ -67,6 +67,10 @@ struct BlacksmithDashboardClient {
             workflowDistribution: distribution,
             platformUsage: core.platformUsage
         )
+    }
+
+    fileprivate static func decodeJobRuns(from data: Data) throws -> [BlacksmithJobRun] {
+        try JSONDecoder().decode([BlacksmithJobRun].self, from: data)
     }
 
     private static func workflowRun(from job: BlacksmithJobRun) -> WorkflowRunUsage {
@@ -409,5 +413,11 @@ enum RunnerLabel {
 private extension String {
     var normalizedRunStatus: String {
         lowercased().replacingOccurrences(of: "-", with: "_")
+    }
+}
+
+enum JobRunListDecoder {
+    static func count(from data: Data) throws -> Int {
+        try BlacksmithDashboardClient.decodeJobRuns(from: data).count
     }
 }

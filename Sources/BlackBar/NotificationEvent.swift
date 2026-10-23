@@ -55,9 +55,16 @@ enum NotificationPlanner {
         }
 
         if preferences.jobFinished && previous.refreshedAt != nil && current.refreshedAt != nil {
-            let currentIDs = Set(current.usage.runs.map(\.id))
+            var observed: [Int64: WorkflowRunUsage] = [:]
+            for run in current.usage.recentJobs + current.usage.runs {
+                if let existing = observed[run.id], hasFinished(existing.status) {
+                    continue
+                }
+                observed[run.id] = run
+            }
             var emittedRunIDs = Set<Int64>()
-            for run in previous.usage.runs where !currentIDs.contains(run.id) && emittedRunIDs.insert(run.id).inserted {
+            for run in previous.usage.runs where emittedRunIDs.insert(run.id).inserted {
+                guard let seen = observed[run.id], hasFinished(seen.status), !hasFinished(run.status) else { continue }
                 events.append(NotificationEvent(
                     id: "blackbar.job.\(run.id)",
                     title: "Job finished",
@@ -68,5 +75,10 @@ enum NotificationPlanner {
         }
 
         return events
+    }
+
+    private static func hasFinished(_ status: String) -> Bool {
+        let normalized = status.lowercased().replacingOccurrences(of: "-", with: "_")
+        return ["completed", "success", "failure", "cancelled", "timed_out", "action_required", "neutral", "skipped", "stale", "startup_failure"].contains(normalized)
     }
 }

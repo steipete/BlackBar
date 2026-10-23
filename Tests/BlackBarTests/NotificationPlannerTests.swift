@@ -67,11 +67,27 @@ struct NotificationPlannerTests {
         ])
     }
 
-    @Test("removed active runs notify as finished jobs")
-    func removedRunsNotify() {
+    @Test("a run missing from the next snapshot is not finished")
+    func missingRunIsNotFinished() {
         let run = workflowRun(id: 42, repository: "steipete/BlackBar", title: "CI")
         let previous = snapshot(usage: usage(runs: [run]), refreshedAt: Date(timeIntervalSince1970: 1))
         let current = snapshot(usage: usage(runs: []), refreshedAt: Date(timeIntervalSince1970: 2))
+
+        let events = NotificationPlanner.events(
+            previous: previous,
+            current: current,
+            preferences: allEnabled
+        )
+
+        #expect(events.isEmpty)
+    }
+
+    @Test("a run that leaves in_progress notifies as finished")
+    func finishedRunNotifies() {
+        let active = workflowRun(id: 42, repository: "steipete/BlackBar", title: "CI", status: "in_progress")
+        let finished = workflowRun(id: 42, repository: "steipete/BlackBar", title: "CI", status: "completed")
+        let previous = snapshot(usage: usage(runs: [active]), refreshedAt: Date(timeIntervalSince1970: 1))
+        let current = snapshot(usage: usage(runs: [], recentJobs: [finished]), refreshedAt: Date(timeIntervalSince1970: 2))
 
         let events = NotificationPlanner.events(
             previous: previous,
@@ -87,6 +103,21 @@ struct NotificationPlannerTests {
                 url: URL(string: "https://github.com/steipete/BlackBar/actions/runs/42")
             )
         ])
+    }
+
+    @Test("an in-progress run that falls off the active list is not finished")
+    func truncatedActiveRunIsNotFinished() {
+        let active = workflowRun(id: 42, repository: "steipete/BlackBar", title: "CI", status: "in_progress")
+        let previous = snapshot(usage: usage(runs: [active]), refreshedAt: Date(timeIntervalSince1970: 1))
+        let current = snapshot(usage: usage(runs: [], recentJobs: [active]), refreshedAt: Date(timeIntervalSince1970: 2))
+
+        let events = NotificationPlanner.events(
+            previous: previous,
+            current: current,
+            preferences: allEnabled
+        )
+
+        #expect(events.isEmpty)
     }
 
     @Test("reset snapshots do not mark every active job as finished")
@@ -138,16 +169,17 @@ private func status(_ pageStatus: String, incidents: [StatusEvent] = []) -> Blac
     BlacksmithStatus(pageStatus: pageStatus, incidents: incidents, maintenances: [])
 }
 
-private func usage(runs: [WorkflowRunUsage] = []) -> BlacksmithUsage {
+private func usage(runs: [WorkflowRunUsage] = [], recentJobs: [WorkflowRunUsage] = []) -> BlacksmithUsage {
     BlacksmithUsage(
         activeVCPU: runs.reduce(0) { $0 + $1.activeVCPU },
         activeJobs: runs.reduce(0) { $0 + $1.activeJobs },
         queuedJobs: 0,
-        runs: runs
+        runs: runs,
+        recentJobs: recentJobs
     )
 }
 
-private func workflowRun(id: Int64, repository: String, title: String) -> WorkflowRunUsage {
+private func workflowRun(id: Int64, repository: String, title: String, status: String = "in_progress") -> WorkflowRunUsage {
     WorkflowRunUsage(
         id: id,
         repository: repository,
@@ -155,8 +187,9 @@ private func workflowRun(id: Int64, repository: String, title: String) -> Workfl
         workflowName: "Tests",
         url: "https://github.com/\(repository)/actions/runs/\(id)",
         activeVCPU: 1,
-        activeJobs: 1,
+        activeJobs: status == "in_progress" ? 1 : 0,
         queuedJobs: 0,
-        jobs: []
+        jobs: [],
+        status: status
     )
 }
