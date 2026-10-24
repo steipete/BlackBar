@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.4 - 2026-10-23
+
+**Highlights:** Notify only for observed job completions and keep dashboard links inside their intended organization and repository.
+
 - Only notify when a previously active job is observed in a finished state, and preserve the last good usage snapshot when the jobs request fails. Thanks @SebTardif.
 - Keep the organization and repository inside the dashboard and GitHub Actions paths, so `#`, `?`, and `/` in that text cannot open a different page. Thanks @SebTardif.
 - Move CI and release builds to `xcode-27`, retain macOS 14 support, and verify the signed universal app under both native arm64 and Rosetta x86_64.
