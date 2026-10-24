@@ -1,55 +1,69 @@
-<?xml version="1.0" standalone="yes"?>
+<?xml version='1.0' encoding='utf-8'?>
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
-    <channel>
-        <title>BlackBar</title>
-        <item>
-            <title>0.3.3</title>
-            <pubDate>Wed, 30 Sep 2026 16:25:45 -0700</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>14</sparkle:version>
-            <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>BlackBar 0.3.3</h2>
-<p><strong>Highlights:</strong> Fixes the 0.3.2 launch crash and updates Sparkle to 2.10.0.</p>
-<ul>
-<li>Fix the launch crash caused by a missing Sparkle runtime search path, and verify embedded frameworks in both architectures before packaging (#13). Thanks @yashiels.</li>
-<li>Update Sparkle to 2.10.0 for updater fixes, including macOS 27 delta-update compression handling.</li>
-</ul>
-<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.3/BlackBar-0.3.3.zip" length="2135174" type="application/octet-stream" sparkle:edSignature="Tk+OKsNdSJ3jcyNELDOtuRoj4JLJXaFt4R43YIn9v1gYeAX+US5Zk9hATRmTDNtxk7/14qtDtUWMOtMWRpa9Dg=="/>
-        </item>
-        <item>
-            <title>0.3.2</title>
-            <pubDate>Sun, 13 Sep 2026 23:24:57 -0700</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>13</sparkle:version>
-            <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>BlackBar 0.3.2</h2>
-<p><strong>Highlights:</strong> Sparkle 2.9.6 brings installer security fixes and more reliable update-window focus.</p>
-<ul>
-<li>Update Sparkle to 2.9.6 for installer security fixes and reliable update-window focus in the menu bar app.</li>
-<li>Keep app packaging compatible with Swift 6.4 build output paths.</li>
-</ul>
-<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.2/BlackBar-0.3.2.zip" length="2166666" type="application/octet-stream" sparkle:edSignature="OHrrH5NUVxeaMfkRXH8Qz9pYP7XVPT/zNCNlJiLd8dGiutxQDRllyy1TdDn525PAbhEMpH/WDx3v0qLVQTF2Bg=="/>
-        </item>
-        <item>
-            <title>0.3.1</title>
-            <pubDate>Mon, 06 Jul 2026 12:45:05 -0700</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
-            <sparkle:version>12</sparkle:version>
-            <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>BlackBar 0.3.1</h2>
-<ul>
-<li>Flatten the menu styling to look native: the stats card loses its rounded border and background, legend chips drop their capsule pills in favor of plain dot + text, and the workflow section divider uses the standard system separator.</li>
-</ul>
-<p><a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.1/BlackBar-0.3.1.zip" length="2150184" type="application/octet-stream" sparkle:edSignature="J1LC09joBuN8zlrhrZHD2bqzgkc28o9NxhJowgfVof20hGtYyL+fk5Nv4aVygPoAMDm3mIMUh77Eblw1u4JZDA=="/>
-        </item>
-    </channel>
+  <channel>
+    <item>
+      <title>0.3.4</title>
+      <pubDate>Sat, 24 Oct 2026 02:56:21 +0000</pubDate>
+      <sparkle:version>15</sparkle:version>
+      <sparkle:shortVersionString>0.3.4</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description>&lt;pre&gt;**Highlights:** Notify only for observed job completions and keep dashboard links inside their intended organization and repository.
+
+- Only notify when a previously active job is observed in a finished state, and preserve the last good usage snapshot when the jobs request fails. Thanks @SebTardif.
+- Keep the organization and repository inside the dashboard and GitHub Actions paths, so `#`, `?`, and `/` in that text cannot open a different page. Thanks @SebTardif.
+- Move CI and release builds to `xcode-27`, retain macOS 14 support, and verify the signed universal app under both native arm64 and Rosetta x86_64.
+&lt;/pre&gt;</description>
+      <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.4/BlackBar-0.3.4.zip" length="2057339" type="application/octet-stream" sparkle:edSignature="HKWRaOKFTlPVsBy+teuRh4ybXB5MqGR4hl2fz3Fy+z0ANBGMTJL3ycje86ER9EzdTl6AE8pBbADUYrDy5/zaBA==" />
+    </item>
+    <title>BlackBar</title>
+    <item>
+      <title>0.3.3</title>
+      <pubDate>Wed, 30 Sep 2026 16:25:45 -0700</pubDate>
+      <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+      <sparkle:version>14</sparkle:version>
+      <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description>&lt;h2&gt;BlackBar 0.3.3&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Highlights:&lt;/strong&gt; Fixes the 0.3.2 launch crash and updates Sparkle to 2.10.0.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fix the launch crash caused by a missing Sparkle runtime search path, and verify embedded frameworks in both architectures before packaging (#13). Thanks @yashiels.&lt;/li&gt;
+&lt;li&gt;Update Sparkle to 2.10.0 for updater fixes, including macOS 27 delta-update compression handling.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md"&gt;View full changelog&lt;/a&gt;&lt;/p&gt;
+</description>
+      <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.3/BlackBar-0.3.3.zip" length="2135174" type="application/octet-stream" sparkle:edSignature="Tk+OKsNdSJ3jcyNELDOtuRoj4JLJXaFt4R43YIn9v1gYeAX+US5Zk9hATRmTDNtxk7/14qtDtUWMOtMWRpa9Dg==" />
+    </item>
+    <item>
+      <title>0.3.2</title>
+      <pubDate>Sun, 13 Sep 2026 23:24:57 -0700</pubDate>
+      <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+      <sparkle:version>13</sparkle:version>
+      <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description>&lt;h2&gt;BlackBar 0.3.2&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Highlights:&lt;/strong&gt; Sparkle 2.9.6 brings installer security fixes and more reliable update-window focus.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Update Sparkle to 2.9.6 for installer security fixes and reliable update-window focus in the menu bar app.&lt;/li&gt;
+&lt;li&gt;Keep app packaging compatible with Swift 6.4 build output paths.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md"&gt;View full changelog&lt;/a&gt;&lt;/p&gt;
+</description>
+      <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.2/BlackBar-0.3.2.zip" length="2166666" type="application/octet-stream" sparkle:edSignature="OHrrH5NUVxeaMfkRXH8Qz9pYP7XVPT/zNCNlJiLd8dGiutxQDRllyy1TdDn525PAbhEMpH/WDx3v0qLVQTF2Bg==" />
+    </item>
+    <item>
+      <title>0.3.1</title>
+      <pubDate>Mon, 06 Jul 2026 12:45:05 -0700</pubDate>
+      <link>https://raw.githubusercontent.com/steipete/BlackBar/main/appcast.xml</link>
+      <sparkle:version>12</sparkle:version>
+      <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description>&lt;h2&gt;BlackBar 0.3.1&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Flatten the menu styling to look native: the stats card loses its rounded border and background, legend chips drop their capsule pills in favor of plain dot + text, and the workflow section divider uses the standard system separator.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="https://github.com/steipete/BlackBar/blob/main/CHANGELOG.md"&gt;View full changelog&lt;/a&gt;&lt;/p&gt;
+</description>
+      <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.1/BlackBar-0.3.1.zip" length="2150184" type="application/octet-stream" sparkle:edSignature="J1LC09joBuN8zlrhrZHD2bqzgkc28o9NxhJowgfVof20hGtYyL+fk5Nv4aVygPoAMDm3mIMUh77Eblw1u4JZDA==" />
+    </item>
+  </channel>
 </rss>
