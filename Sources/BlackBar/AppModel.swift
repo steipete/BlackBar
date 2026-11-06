@@ -139,6 +139,9 @@ final class AppModel: ObservableObject {
         try? keychain.delete(account: "blacksmith-cookie")
         authState = .disconnected
         apply(.empty.with(error: "Blacksmith disconnected"))
+        Task {
+            await BlacksmithCookies.remove(from: .default())
+        }
     }
 
     func openBlacksmith() {
