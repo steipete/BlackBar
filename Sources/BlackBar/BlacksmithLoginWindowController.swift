@@ -15,7 +15,7 @@ final class BlacksmithLoginWindowController: NSWindowController, WKNavigationDel
         self.organization = owner
         self.completion = completion
         let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .default()
+        configuration.websiteDataStore = .nonPersistent()
         webView = WKWebView(frame: .zero, configuration: configuration)
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 980, height: 720),
@@ -58,7 +58,7 @@ final class BlacksmithLoginWindowController: NSWindowController, WKNavigationDel
     private func finishIfAuthenticated() async {
         guard let host = webView.url?.host, host.contains("blacksmith.sh") else { return }
         let cookies = await webView.configuration.websiteDataStore.httpCookieStore.allCookies()
-        let backendCookies = cookies.filter { $0.domain.contains("blacksmith.sh") || $0.domain.contains("dashboardbackend.blacksmith.sh") }
+        let backendCookies = cookies.filter { BlacksmithCookies.matches(domain: $0.domain) }
         guard !backendCookies.isEmpty else { return }
         let header = backendCookies.map { "\($0.name)=\($0.value)" }.joined(separator: "; ")
         guard header.contains("blacksmith") || header.contains("session") || header.contains("XSRF") else { return }
@@ -66,20 +66,14 @@ final class BlacksmithLoginWindowController: NSWindowController, WKNavigationDel
         complete(.success(header))
     }
 
+    var loginUsesPersistentStore: Bool {
+        webView.configuration.websiteDataStore.isPersistent
+    }
+
     private func complete(_ result: Result<String, Error>) {
         guard !completed else { return }
         completed = true
         completion(result)
         close()
-    }
-}
-
-private extension WKHTTPCookieStore {
-    func allCookies() async -> [HTTPCookie] {
-        await withCheckedContinuation { continuation in
-            getAllCookies { cookies in
-                continuation.resume(returning: cookies)
-            }
-        }
     }
 }
