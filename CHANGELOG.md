@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Update Sparkle to 2.10.1 for upstream updater fixes.
+
 ## 0.3.4 - 2026-10-23
 
 **Highlights:** Notify only for observed job completions and keep dashboard links inside their intended organization and repository.
