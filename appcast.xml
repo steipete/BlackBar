@@ -2,6 +2,18 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
   <channel>
     <item>
+      <title>0.3.5</title>
+      <pubDate>Mon, 16 Nov 2026 07:28:38 +0000</pubDate>
+      <sparkle:version>16</sparkle:version>
+      <sparkle:shortVersionString>0.3.5</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description>&lt;pre&gt;**Highlights:** Sparkle 2.10.1 brings upstream updater fixes.
+
+- Update Sparkle to 2.10.1 for upstream updater fixes.
+&lt;/pre&gt;</description>
+      <enclosure url="https://github.com/steipete/BlackBar/releases/download/v0.3.5/BlackBar-0.3.5.zip" length="2060436" type="application/octet-stream" sparkle:edSignature="v8+MMGcaxKykRgy2IsYzyI+EjeqClX4Gpg4yd+8Y7d/dfEU6bYnGJ7xOTtqu1ZF5xwsbedNvqYv4MhqN3+niCQ==" />
+    </item>
+    <item>
       <title>0.3.4</title>
       <pubDate>Sat, 24 Oct 2026 02:56:21 +0000</pubDate>
       <sparkle:version>15</sparkle:version>
