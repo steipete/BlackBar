@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.5 - 2026-11-15
+
+**Highlights:** Sparkle 2.10.1 brings upstream updater fixes.
+
 - Update Sparkle to 2.10.1 for upstream updater fixes.
 
 ## 0.3.4 - 2026-10-23
